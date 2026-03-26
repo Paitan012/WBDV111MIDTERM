@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Luna Vista Resort</title>
+<link rel="stylesheet" href="luna.css">
+</head>
+<body>
+
+<!-- FIXED BACKGROUND VIDEO -->
+<video class="bg-video" autoplay muted loop playsinline>
+  <source src="resort-video.mp4" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+<header class="navbar">
+  <nav class="navbar-container">
+     <img src="logo.png" class="ilogo">
+    <span class="logo">Luna Vista Resort</span>
+    <a href="index.html">Home</a>
+    <a href="rooms.html">Rooms</a>
+    <a href="luna.html">Check-in</a>
+    <a href="itinerary.html">Itinerary</a>
+  </nav>
+</header>
+
+<!-- BACKGROUND VIDEO -->
+<video class="bg-video" autoplay muted loop playsinline>
+  <source src="resort-video.mp4" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+<section class="hero-text">
+  <div class="hero-content">
+    <h1>Check in now to Luna Vista Resort!</h1>
+    <p>
+      Experience the ultimate luxury getaway at Luna Vista Resort. 
+      Enjoy breathtaking ocean views, lush gardens, and world-class amenities 
+      that make every moment unforgettable.
+    </p>
+  </div>
+</section>
+
+<section class="login-section">
+  <div class="login-bar">
+    <h2>Enter Email:</h2>
+    <form id="loginForm">
+      <input type="text" placeholder="Username" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Check-in</button>
+    </form>
+  </div>
+</section>
+
+<script>
+const form = document.getElementById('loginForm');
+form.addEventListener('submit', function(e){
+  e.preventDefault(); // prevent default form submission
+
+  const username = form.querySelector('input[type="text"]').value;
+
+  // Create notification
+  const notification = document.createElement('div');
+  notification.innerText = `Welcome ${username}! You have successfully checked in at Luna Vista Resort.`;
+
+  // Styling for bottom-right popup
+  Object.assign(notification.style, {
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    background: 'rgba(255, 245, 210, 0.95)', // soft sand color
+    color: '#8b6d4d',
+    padding: '20px 30px',
+    borderRadius: '20px',
+    fontSize: '1rem',
+    fontWeight: '600',
+    textAlign: 'center',
+    zIndex: '20',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.5)',
+    opacity: '0',
+    transform: 'translateY(50px)',
+    transition: 'opacity 0.5s ease, transform 0.5s ease'
+  });
+
+  document.body.appendChild(notification);
+
+  // Slide in
+  requestAnimationFrame(() => {
+    notification.style.opacity = '1';
+    notification.style.transform = 'translateY(0)';
+  });
+
+  // Slide out and redirect after 3 seconds
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateY(50px)';
+    setTimeout(() => {
+      window.location.href = 'home.html';
+    }, 500); // wait for slide-out animation
+  }, 3000);
+});
+</script>
+
+</body>
+</html>
