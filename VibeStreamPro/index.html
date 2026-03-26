@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>VibeStream Pro</title>
+<link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+
+<nav>
+<div class="nav-container">
+
+<img src="logo.png" class="logo">
+
+<div class="links">
+<a href="#home">Home</a>
+<a href="#main">Music Gallery </a>
+<a href="#contact">About Us | Contact Us</a>
+<a href="login.html">Login</a>
+</div>
+
+</div>
+</nav>
+
+<div class="one" id="home">
+
+<h1>VibeStream Pro</h1>
+
+<p>Raised fists with sleek moves</p>
+
+<button id="listenNow" >Listen Now</button>
+
+</div>
+
+<div class="main" id="main">
+
+	<div class="about">
+
+		<h2>Explore the Beat</h2>
+		
+		<h3>Full Charge Crew!</h3>
+		
+		<p>
+			FullCharge Crew is the creative team behind VibeStream Pro — a platform built to stream music with energy, style, and impact.
+
+			We don’t just stream music. We power the vibe.
+		</p>
+		
+		<hr>
+		
+		<div class="bar">
+		
+		<img src="song.jpg" id="cover">
+		
+		<div class="songinfo">
+		
+		<h4 id="title">No Song Selected</h4>
+		
+		<p id="artist">No artist</p>
+		
+		<div class="progress-container">
+			<span id="currentTime">0:00</span>
+			<input type="range" id="progress" value="0" min="0" max="100">
+			<span id="duration">0:00</span>
+		  </div>
+
+		</div>
+		
+		<button onclick="prevSong()">⏮</button>
+
+		<button id="playBtn" onclick="togglePlay()">▶</button>
+		
+		<button onclick="nextSong()">⏭</button>
+		
+		</div>
+
+		<hr>
+
+		<img src="clubs.jfif">
+
+		</div>
+
+<div class="music-image">
+	<img src="s.jfif" data-song="Stateside.mp3" data-artist="PinkPantheress">
+	<img src="tif.jfif" data-song="This is for.mp3" data-artist="TWICE">
+	<img src="js.jfif" data-song="Just Dance.mp3" data-artist="Lady Gaga">
+
+	<img src="itb.jfif" data-song="I'm the best.mp3" data-artist="2ne1">
+	<img src="rtb.jfif" data-song="Rock your body.mp3" data-artist="Black Eyed Peas">
+	<img src="fb.jfif" data-song="Fantastic Baby.mp3" data-artist="BIGBANG">
+	
+	<img src="wannabe.jfif" data-song="Wannabe.mp3" data-artist="ITZY">
+	<img src="j.jfif" data-song="Judas.mp3" data-artist="Lady Gaga">
+	<img src="whyb.jfif" data-song="Where have you been.mp3" data-artist="Rihanna">
+	
+	<img src="g.jfif" data-song="Gigolo.mp3" data-artist="bbno$">
+	<img src="tif.jfif" data-song="Fame is a Gun.mp3" data-artist="Addison Rae">
+	<img src="rtb.jfif" data-song="365.mp3" data-artist="Charlie XCX">
+
+	</div>
+
+</div>
+
+<script>
+// Create audio object that will control the music
+let audio = new Audio();
+// Get all song images
+let songs = document.querySelectorAll(".music-image img");
+// Track current song
+let currentSong = 0;
+
+// Get important elements from the HTML
+let playBtn = document.getElementById("playBtn");
+let titleEl = document.getElementById("title");
+let artistEl = document.getElementById("artist");
+let coverEl = document.getElementById("cover");
+
+// Plays the selected song
+function playSong() {
+    // Get the current selected song image
+    let songImg = songs[currentSong];
+    // Set audio source from data-song attribute
+    audio.src = songImg.dataset.song;
+    // Change the cover image
+    coverEl.src = songImg.src;
+    // Set the title (remove .mp3 from file name)
+    titleEl.innerText = songImg.dataset.song.replace(".mp3","");
+    // Set the artist name
+    artistEl.innerText = songImg.dataset.artist;
+    // Play the music
+    audio.play();
+    // Change button icon to pause
+    playBtn.innerText = "⏸";
+}
+
+// Clicks a song image
+songs.forEach((img, index) => {
+    img.addEventListener("click", function() {
+        currentSong = index;
+        playSong();
+    });
+});
+
+function togglePlay() {
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "⏸";
+    } else {
+        audio.pause();
+        playBtn.innerText = "▶";
+    }
+}
+
+function nextSong() {
+    currentSong++;
+     // If reached end, go back to first song
+    if (currentSong >= songs.length) currentSong = 0;
+    playSong();
+}
+
+// "Listen Now" button is clicked
+function prevSong() {
+    currentSong--;
+    // If below 0, go to last song
+    if (currentSong < 0) currentSong = songs.length - 1;
+    playSong();
+}
+
+document.getElementById("listenNow").addEventListener("click", function() {
+    // Start from first song
+    currentSong = 0;
+    // Play it
+    playSong();
+     // Smooth scroll to music player section
+document.getElementById("main").scrollIntoView({ behavior: 'smooth' });
+});
+
+// Song ends automatically
+audio.addEventListener("ended", function() {
+    // Move to next song
+    currentSong++; 
+    // If last song, restart from first
+    if (currentSong >= songs.length) {
+        currentSong = 0;
+    }
+    playSong();
+});
+
+// Get progress bar and time display elements
+let progress = document.getElementById("progress");
+let currentTimeEl = document.getElementById("currentTime");
+let durationEl = document.getElementById("duration");
+
+// Update progress bar while song is playing
+audio.addEventListener("timeupdate", function() {
+    // Calculate percentage of song played
+    let percent = (audio.currentTime / audio.duration) * 100;
+     // Update progress bar value
+    progress.value = percent || 0;
+
+    // Format current time
+    let minutes = Math.floor(audio.currentTime / 60);
+    let seconds = Math.floor(audio.currentTime % 60).toString().padStart(2, "0");
+    // Show current time
+    currentTimeEl.innerText = `${minutes}:${seconds}`;
+
+    // If duration is valid
+    if (!isNaN(audio.duration)) {
+         // Format duration
+        let durMinutes = Math.floor(audio.duration / 60);
+        let durSeconds = Math.floor(audio.duration % 60).toString().padStart(2, "0");
+        // Show total duration
+        durationEl.innerText = `${durMinutes}:${durSeconds}`;
+    }
+});
+
+// User drags the progress bar
+progress.addEventListener("input", function() {
+    // Change song current time based on slider position
+    audio.currentTime = (progress.value / 100) * audio.duration;
+});
+	</script>
+
+    <div class="about-container">
+       <div class="about-text">
+    <h2>About Us – VibeStream</h2>
+    <hr>
+
+    <p>
+        <strong>VibeStream</strong> is a music experience built for those who live and breathe high-energy sound.
+        It focuses on delivering one powerful, continuous playlist inspired by the vibe and intensity of FullCharge Crew.
+        <br><br>
+
+        Instead of endless browsing or personalized mixes, VibeStream keeps it simple —
+        one solid theme, one consistent mood, and one uninterrupted flow from start to finish.
+        <br><br>
+
+        Whether you're working, hyping yourself up, or vibing with friends,
+        the playlist is designed to keep your momentum strong and your energy fully charged.
+        <br><br>
+
+        Our goal is straightforward: provide a focused soundtrack that fuels your vibe anytime, anywhere.
+        <br><br>
+
+        <strong>VibeStream – Feel the music. Live the vibe.</strong>
+    </p>
+</div>
+
+        <div class="about-image">
+            <img src="design.jfif" alt="VibeStream">
+        </div>
+    </div>
+
+<div class="contact" id="contact">
+
+	<hr><h2>Contact Us</h2><hr>
+
+<p> 📧 Email: support@vibestreampro.com<br>
+	📱 Phone: +63 912 345 6789<br>
+	🌐 Website: www.vibestreampro.com</p>
+
+</div>
+
+</body>
+</html>

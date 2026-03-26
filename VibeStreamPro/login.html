@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | VibeStream Pro</title>
+     <!-- Makes website responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #365201, #030303);
+            color: white;
+        }
+
+        .login-container {
+            width: 100%;
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+             /* Semi-transparent background (glass effect) */
+            background: rgba(14, 7, 0, 0.788);
+            padding: 40px;
+            width: 350px;
+            border-radius: 15px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 25px rgba(255, 123, 0, 0.863);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    }
+
+    .logo-icon img {
+    width: 70px;
+    height: auto;
+    }
+
+        .brand h1 {
+            font-size: 26px;
+        }
+
+        .brand span {
+            color: #8d31f7;
+        }
+
+        .brand p {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            font-size: 14px;
+            color: #aaa;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -8px;
+            left: 8px;
+            background: #111;
+            padding: 0 5px;
+            font-size: 11px;
+            color: #d607f1;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #ab0cca;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #7af85b;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .footer-links a {
+            color: #fc745c;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            
+            <div class="brand">
+                <div class="logo-icon">
+                    <img src="logo.png" alt="VibeStream Pro Logo">
+                </div>
+                <h1>VibeStream <span>Pro</span></h1>
+                <p>Stream your mood. Feel the rhythm.</p>
+            </div>
+
+            <form id="loginForm">
+                
+                <div class="input-group">
+                    <input type="email" id="email" required placeholder=" ">
+                    <label for="email">Email Address</label>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="password" required placeholder=" ">
+                    <label for="password">Password</label>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    Enter the Vibe
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+              // Prevent page from reloading automatically
+            event.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            if(email && password){
+                 // Redirect user to home page
+                window.location.href = "home.html";
+            } else {
+                // Show alert if something is empty
+                alert("Please fill in all fields.");
+            }
+        });
+    </script>
+
+</body>
+</html>
