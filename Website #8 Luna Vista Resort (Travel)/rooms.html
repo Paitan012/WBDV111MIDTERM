@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooms | Luna Vista Resort</title>
+<link rel="stylesheet" href="rooms.css">
+</head>
+<body>
+
+<!-- BACKGROUND VIDEO -->
+<video class="bg-video" autoplay muted loop playsinline>
+  <source src="resort-video.mp4" type="video/mp4">
+</video>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <nav class="navbar-container">
+     <img src="logo.png" class="ilogo">
+    <span class="logo">Luna Vista Resort</span>
+    <a href="home.html">Home</a>
+  </nav>
+</header>
+
+<!-- HERO TEXT -->
+<section class="hero-text">
+  <h1>Select Your Room</h1>
+  <p>Choose your preferred room type to start your unforgettable stay.</p>
+</section>
+
+<!-- FILTER BUTTONS -->
+<div class="filter-buttons">
+  <button class="filter-btn active" data-type="all">All</button>
+  <button class="filter-btn" data-type="ocean">Ocean View</button>
+  <button class="filter-btn" data-type="garden">Garden View</button>
+  <button class="filter-btn" data-type="suite">Suite</button>
+  <button class="filter-btn" data-type="deluxe">Deluxe</button>
+</div>
+
+<!-- CAROUSEL -->
+<div class="carousel-wrapper">
+  <button class="prev">&lt;</button>
+  <div class="carousel-track">
+    <!-- Ocean -->
+    <div class="room-card" data-type="ocean"><img src="o1.jpg"><h3>Ocean View</h3></div>
+    <div class="room-card" data-type="ocean"><img src="o2.jpg"><h3>Ocean View</h3></div>
+    <div class="room-card" data-type="ocean"><img src="o3.jpg"><h3>Ocean View</h3></div>
+    <!-- Garden -->
+    <div class="room-card" data-type="garden"><img src="g1.jpg"><h3>Garden View</h3></div>
+    <div class="room-card" data-type="garden"><img src="g2.jpg"><h3>Garden View</h3></div>
+    <!-- Suite -->
+    <div class="room-card" data-type="suite"><img src="s1.jpg"><h3>Suite</h3></div>
+    <div class="room-card" data-type="suite"><img src="s2.jpg"><h3>Suite</h3></div>
+    <!-- Deluxe -->
+    <div class="room-card" data-type="deluxe"><img src="d1.jpg"><h3>Deluxe</h3></div>
+    <div class="room-card" data-type="deluxe"><img src="d2.jpg"><h3>Deluxe</h3></div>
+    <div class="room-card" data-type="deluxe"><img src="d3.jpg"><h3>Deluxe</h3></div>
+  </div>
+  <button class="next">&gt;</button>
+</div>
+
+<!-- NEXT BUTTON -->
+<div class="next-button">
+  <button id="nextBooking">Next: Add Amenities</button>
+</div>
+
+<script>
+// Room selection
+let selectedRoom = null;
+const roomCards = document.querySelectorAll('.room-card');
+roomCards.forEach(card => {
+  card.addEventListener('click', () => {
+    roomCards.forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedRoom = card.dataset.type;
+  });
+});
+
+// Filter buttons
+const filterBtns = document.querySelectorAll('.filter-btn');
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const type = btn.dataset.type;
+    roomCards.forEach(card => {
+      card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
+    });
+  });
+});
+
+// Carousel
+const track = document.querySelector('.carousel-track');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+const cardWidth = 200; // width of each card including margin
+let position = 0;
+
+let autoScroll = setInterval(() => moveCarousel(1), 30);
+track.addEventListener('mouseenter', () => clearInterval(autoScroll));
+track.addEventListener('mouseleave', () => autoScroll = setInterval(() => moveCarousel(1), 30));
+
+function moveCarousel(dir){
+  const maxTranslate = -(track.scrollWidth - track.parentElement.offsetWidth);
+  position -= dir;
+  if(position < maxTranslate) position = maxTranslate;
+  if(position > 0) position = 0;
+  track.style.transform = `translateX(${position}px)`;
+}
+
+// Button clicks
+prevBtn.addEventListener('click', () => moveCarousel(-cardWidth));
+nextBtn.addEventListener('click', () => moveCarousel(cardWidth));
+
+// Next button
+document.getElementById('nextBooking').addEventListener('click', () => {
+  if(!selectedRoom){ 
+    alert("Please select a room to continue!"); 
+    return; 
+  }
+
+  // Redirect to itinerary.html and pass the selected room in query string
+  window.location.href = `itinerary.html?room=${selectedRoom}`;
+});
+
+</script>
+
+</body>
+</html>
