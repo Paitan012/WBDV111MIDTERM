@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt Desk | Admin Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-green: #4AF626;
+            --term-bg: #0D0D0D;
+            --sidebar: #121417;
+            --card-bg: #1e2126;
+            --text-main: #e8e8e8;
+            --danger: #ff4d4d;
+            --warning: #ffaa00;
+            --active-blue: #007bff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1d21;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- AUTH OVERLAY --- */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: var(--term-bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .auth-card {
+            width: 380px;
+            padding: 30px;
+            border: 1px solid #333;
+            background: #111;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .auth-header { color: var(--term-green); margin-bottom: 20px; font-size: 0.9rem; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        
+        .hint-box {
+            background: rgba(74, 246, 38, 0.05);
+            border: 1px solid rgba(74, 246, 38, 0.2);
+            padding: 10px;
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid #444;
+            color: var(--term-green);
+            padding: 12px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .auth-input:focus { border-color: var(--term-green); }
+
+        .btn-auth {
+            width: 100%;
+            background: var(--term-green);
+            color: black;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .btn-auth:hover { background: #39d31f; }
+
+        /* --- Main Dashboard (Hidden initially) --- */
+        #mainDashboard { display: none; flex-direction: column; height: 100vh; }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--sidebar);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-brand { font-weight: bold; color: var(--term-green); letter-spacing: 1px; font-family: 'Fira Code', monospace; }
+        .admin-badge { background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 3px; margin-left: 10px; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 14px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .nav-links button:hover { background: #333; border-color: var(--term-green); }
+        .btn-exit { border-color: var(--danger) !important; color: var(--danger) !important; }
+        .btn-exit:hover { background: var(--danger) !important; color: white !important; }
+
+        /* --- Stats Grid --- */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--term-green);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .stat-card h3 { margin: 0; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card p { margin: 10px 0 0; font-size: 1.8rem; font-family: 'Fira Code', monospace; }
+
+        /* --- Table Styling --- */
+        .table-section {
+            padding: 0 20px 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .admin-table th {
+            text-align: left;
+            background: #121417;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid #2a2d32;
+            font-size: 0.9rem;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .status-open { background: rgba(74, 246, 38, 0.1); color: var(--term-green); }
+        .status-pending { background: rgba(255, 170, 0, 0.1); color: var(--warning); }
+        .status-closed { background: rgba(255, 77, 77, 0.1); color: var(--danger); }
+
+        .action-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .action-btn:hover { background: var(--active-blue); border-color: var(--active-blue); }
+    </style>
+</head>
+<body>
+
+    <div id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-header">> SYSTEM_ACCESS_REQUIRED</div>
+            
+            <div class="hint-box">
+                CREDENTIAL_HINT:<br>
+                USER: admin@gmail.com<br>
+                PASS: admin123
+            </div>
+
+            <input type="text" id="userInput" class="auth-input" placeholder="USERNAME" autocomplete="off">
+            <input type="password" id="passInput" class="auth-input" placeholder="ACCESS_KEY">
+            <button class="btn-auth" onclick="validateAccess()">AUTHENTICATE</button>
+            
+            <div id="authError" style="color: var(--danger); font-size: 0.7rem; margin-top: 15px; display: none; text-align: center;">
+                [ERROR] INVALID_CREDENTIALS
+            </div>
+        </div>
+    </div>
+
+    <div id="mainDashboard">
+        <nav>
+            <div class="nav-brand">FIXIT_DESK <span class="admin-badge">ADMIN_ROOT</span></div>
+            <div id="live-clock" style="font-family: 'Fira Code'; font-size: 0.8rem; color: #666;"></div>
+            <div class="nav-links">
+                <button onclick="logout()" class="btn-exit">Term_Session</button>
+                <button onclick="alert('Viewing Logs...')">Logs</button>
+                <button onclick="alert('User Management...')">Users</button>
+                <button class="btn-progress" style="color: var(--term-green); border-color: var(--term-green);">Settings</button>
+                 <button onclick="location.href='index.html'">Dashboard</button>
+            </div>
+        </nav>
+
+        <div class="admin-grid">
+            <div class="stat-card">
+                <h3>Active Tickets</h3>
+                <p id="total-tickets">24</p>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning);">
+                <h3>Avg. Response</h3>
+                <p>12m</p>
+            </div>
+            <div class="stat-card">
+                <h3>Agents Online</h3>
+                <p>06</p>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--active-blue);">
+                <h3>Server Load</h3>
+                <p id="server-load" style="color: var(--term-green);">14%</p>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="font-size: 1.1rem; margin: 0;">Live Ticket Queue</h2>
+                <button class="action-btn" onclick="location.reload()">Refresh Data</button>
+            </div>
+            
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Issue Category</th>
+                        <th>Status</th>
+                        <th>Agent</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ticket-body">
+                    <tr>
+                        <td>#4421</td>
+                        <td>j_doe_88</td>
+                        <td>Hardware / Monitor</td>
+                        <td><span class="status-pill status-open">OPEN</span></td>
+                        <td>Marcus V.</td>
+                        <td><button class="action-btn" onclick="intercept('#4421')">Intercept</button></td>
+                    </tr>
+                    <tr id="row-4422">
+                        <td>#4422</td>
+                        <td>ceo_admin</td>
+                        <td>Network / VPN</td>
+                        <td><span class="status-pill status-pending">PENDING</span></td>
+                        <td class="agent-col">Unassigned</td>
+                        <td><button class="action-btn" onclick="assign('#4422')">Assign Me</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Authentication Logic
+        function validateAccess() {
+            const user = document.getElementById('userInput').value;
+            const pass = document.getElementById('passInput').value;
+            const error = document.getElementById('authError');
+
+            if (user === "admin@gmail.com" && pass === "admin123") {
+                localStorage.setItem('fixit_auth', 'true');
+                renderView();
+            } else {
+                error.style.display = "block";
+                document.getElementById('passInput').value = "";
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('fixit_auth');
+            renderView();
+        }
+
+        function renderView() {
+            const isAuth = localStorage.getItem('fixit_auth') === 'true';
+            document.getElementById('authOverlay').style.display = isAuth ? 'none' : 'flex';
+            document.getElementById('mainDashboard').style.display = isAuth ? 'flex' : 'none';
+        }
+
+        // --- DASHBOARD FUNCTIONS ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function intercept(id) {
+            alert("ADMIN INTERCEPT: Diverting ticket " + id + " to your terminal.");
+        }
+
+        function assign(id) {
+            alert("Ticket " + id + " assigned to Root Admin.");
+        }
+
+        setInterval(() => {
+            const load = Math.floor(Math.random() * 20) + 5;
+            const el = document.getElementById('server-load');
+            if(el) el.innerText = load + "%";
+        }, 3000);
+
+        // Run on load
+        window.onload = renderView;
+    </script>
+</body>
+</html>

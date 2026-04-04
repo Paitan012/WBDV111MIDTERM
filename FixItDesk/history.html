@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt Desk | Activity History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-green: #4AF626;
+            --term-bg: #0D0D0D;
+            --dash-bg: #1a1d21;
+            --sidebar: #121417;
+            --card-bg: #1e2126;
+            --text-main: #e8e8e8;
+            --log-muted: #666;
+            --admin-gold: #ffaa00;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dash-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--sidebar);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-brand { 
+            display: flex; 
+            align-items: center; 
+            font-weight: bold; 
+            color: var(--term-green); 
+            letter-spacing: 1px; 
+            font-family: 'Fira Code', monospace; 
+        }
+
+        .nav-logo-small {
+            height: 28px;
+            width: auto;
+            margin-right: 12px;
+            filter: drop-shadow(0 0 5px var(--term-green));
+        }
+
+        .nav-links { display: flex; align-items: center; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 14px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        /* --- ADMIN POP-OUT STYLE --- */
+        .btn-admin-pop {
+            background: rgba(255, 170, 0, 0.1) !important;
+            border-color: var(--admin-gold) !important;
+            color: var(--admin-gold) !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: adminPulse 2s infinite;
+        }
+
+        .btn-admin-pop:hover {
+            background: var(--admin-gold) !important;
+            color: black !important;
+            box-shadow: 0 0 15px var(--admin-gold);
+        }
+
+        @keyframes adminPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
+        }
+
+        .nav-links button:hover:not(.btn-admin-pop) { background: #333; }
+        .active-nav { border-color: var(--term-green) !important; color: var(--term-green) !important; }
+
+        /* --- History Content --- */
+        .history-container {
+            flex: 1;
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .terminal-log {
+            background: #050505;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .log-timestamp { color: var(--log-muted); min-width: 180px; }
+        .log-action { color: var(--term-green); font-weight: bold; }
+        .log-details { color: #ccc; }
+
+        .status-success { color: #4AF626; }
+        .status-info { color: #007bff; }
+        .status-alert { color: #ffaa00; }
+
+        .filter-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            background: #222;
+            border: 1px solid #444;
+            color: #888;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #333;
+            color: white;
+            border-color: var(--term-green);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <img src="logo.png" alt="FixIt" class="nav-logo-small">
+            <span>FIXIT_DESK // AUDIT_LOG</span>
+        </div>
+        <div class="nav-links">
+            <button onclick="location.href='admin.html'" class="btn-admin-pop">Admin</button>
+            <button onclick="location.href='index.html'">Dashboard</button>
+            <button onclick="location.href='tickets.html'">Tickets</button>
+            <button onclick="location.href='support.html'">Support</button>
+            <button class="active-nav">History</button>
+        </div>
+    </nav>
+
+    <div class="history-container">
+        <div class="log-header">
+            <h2 style="margin: 0; font-size: 1.2rem;">User Activity History</h2>
+            <button class="filter-btn" onclick="clearLogs()" style="color: #ff4d4d;">Clear Session Logs</button>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active">All Events</button>
+            <button class="filter-btn">Auth</button>
+            <button class="filter-btn">Tickets</button>
+            <button class="filter-btn">Files</button>
+        </div>
+
+        <div class="terminal-log" id="log-display">
+            <div class="log-entry">
+                <span class="log-timestamp">[ 2026-04-04 12:30:11 ]</span>
+                <span class="log-action status-success">LOGIN_SUCCESS</span>
+                <span class="log-details">User session initiated from IP 192.168.1.45</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[ 2026-04-04 12:32:45 ]</span>
+                <span class="log-action status-info">TICKET_CREATED</span>
+                <span class="log-details">Ticket #4421 [Monitor Flicker] opened.</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[ 2026-04-04 12:35:10 ]</span>
+                <span class="log-action status-alert">FILE_UPLOAD</span>
+                <span class="log-details">Screenshot_Monitor_Error.png attached to #4421.</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[ 2026-04-04 12:38:22 ]</span>
+                <span class="log-action status-info">MSG_SENT</span>
+                <span class="log-details">Outgoing encrypted message to Agent Marcus.</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[ 2026-04-04 12:40:05 ]</span>
+                <span class="log-action status-success">KB_SEARCH</span>
+                <span class="log-details">Search query executed: "HDMI troubleshooting".</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function clearLogs() {
+            if(confirm("Confirm deletion of session audit logs?")) {
+                const now = new Date();
+                const timeStr = now.toISOString().replace('T', ' ').substring(0, 19);
+                document.getElementById('log-display').innerHTML = `
+                    <div class="log-entry" style="color: #444;">
+                        <span class="log-timestamp">[ ${timeStr} ]</span>
+                        <span class="log-action">LOGS_CLEARED</span>
+                        <span class="log-details">System history wiped by user.</span>
+                    </div>
+                `;
+            }
+        }
+
+        setInterval(() => {
+            const logDisplay = document.getElementById('log-display');
+            const now = new Date();
+            const timeStr = now.toISOString().replace('T', ' ').substring(0, 19);
+            
+            const newLog = document.createElement('div');
+            newLog.className = 'log-entry';
+            newLog.innerHTML = `
+                <span class="log-timestamp">[ ${timeStr} ]</span>
+                <span class="log-action" style="color: #444;">SYS_PING</span>
+                <span class="log-details">Connection heartbeat active...</span>
+            `;
+            logDisplay.appendChild(newLog);
+            logDisplay.scrollTop = logDisplay.scrollHeight;
+        }, 30000);
+    </script>
+</body>
+</html>

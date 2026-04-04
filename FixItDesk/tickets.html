@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt Desk | My Tickets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-green: #4AF626;
+            --term-bg: #0D0D0D;
+            --dash-bg: #1a1d21;
+            --sidebar: #121417;
+            --card-bg: #1e2126;
+            --text-main: #e8e8e8;
+            --active-blue: #007bff;
+            --admin-gold: #ffaa00;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dash-bg);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--sidebar);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-brand { 
+            display: flex; 
+            align-items: center; 
+            font-weight: bold; 
+            color: var(--term-green); 
+            letter-spacing: 1px; 
+            font-family: 'Fira Code', monospace; 
+        }
+
+        .nav-logo-small {
+            height: 28px;
+            width: auto;
+            margin-right: 12px;
+            filter: drop-shadow(0 0 8px var(--term-green));
+        }
+
+        .nav-links { display: flex; align-items: center; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 14px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        /* --- ADMIN POP-OUT STYLE --- */
+        .btn-admin-pop {
+            background: rgba(255, 170, 0, 0.1) !important;
+            border-color: var(--admin-gold) !important;
+            color: var(--admin-gold) !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: adminPulse 2s infinite;
+        }
+
+        .btn-admin-pop:hover {
+            background: var(--admin-gold) !important;
+            color: black !important;
+            box-shadow: 0 0 15px var(--admin-gold);
+        }
+
+        @keyframes adminPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
+        }
+
+        .nav-links button:hover:not(.btn-admin-pop) { background: #333; }
+        .active-nav { border-color: var(--term-green) !important; color: var(--term-green) !important; }
+
+        /* --- Layout --- */
+        .container { display: flex; height: calc(100vh - 55px); }
+
+        .ticket-sidebar {
+            width: 350px;
+            background: var(--sidebar);
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #222; }
+
+        .search-box {
+            width: 100%;
+            background: #1a1d21;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .ticket-items { overflow-y: auto; flex: 1; }
+
+        .ticket-card {
+            padding: 15px 20px;
+            border-bottom: 1px solid #222;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .ticket-card:hover { background: #1d2025; }
+        .ticket-card.selected { background: #1d2025; border-left: 4px solid var(--term-green); }
+
+        .status-dot { height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+
+        .ticket-detail-view { flex: 1; padding: 40px; overflow-y: auto; background: var(--dash-bg); }
+
+        .detail-header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+
+        .badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+        .badge-open { background: rgba(74, 246, 38, 0.1); color: var(--term-green); }
+        .badge-closed { background: #333; color: #888; }
+
+        .timeline { border-left: 2px solid #333; margin-left: 10px; padding-left: 25px; position: relative; }
+        .timeline-item { margin-bottom: 30px; position: relative; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px; top: 5px;
+            width: 12px; height: 12px;
+            background: var(--dash-bg);
+            border: 2px solid var(--term-green);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <img src="logo.png" alt="FixIt" class="nav-logo-small">
+            <span>FIXIT_DESK // TICKETS</span>
+        </div>
+        <div class="nav-links">
+            <button onclick="location.href='admin.html'" class="btn-admin-pop">Admin</button>
+            <button onclick="location.href='index.html'">Dashboard</button>
+            <button class="active-nav">Tickets</button>
+            <button onclick="location.href='support.html'">Support</button>
+            <button onclick="location.href='history.html'">History</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <aside class="ticket-sidebar">
+            <div class="sidebar-header">
+                <input type="text" class="search-box" placeholder="Filter tickets...">
+            </div>
+            <div class="ticket-items" id="ticket-list">
+                <div class="ticket-card selected" onclick="viewTicket('4421', 'Monitor Flicker', 'Open')">
+                    <div style="font-weight: 600;">#4421 - Monitor Flicker</div>
+                    <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+                        <span class="status-dot" style="background: var(--term-green);"></span> Status: Open
+                    </div>
+                </div>
+                <div class="ticket-card" onclick="viewTicket('3992', 'VPN Configuration', 'Closed')">
+                    <div style="font-weight: 600;">#3992 - VPN Configuration</div>
+                    <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+                        <span class="status-dot" style="background: #555;"></span> Status: Closed
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="ticket-detail-view" id="detail-pane">
+            <div class="detail-header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h1 id="det-title" style="margin: 0 0 10px 0;">#4421 - Monitor Flicker</h1>
+                        <span id="det-badge" class="badge badge-open">Open Ticket</span>
+                    </div>
+                    <button onclick="location.href='index.html'" style="background: var(--active-blue); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Open Chat</button>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="font-size: 0.8rem; color: #666;">April 4, 2026 - 08:00 PM</div>
+                    <div style="font-weight: 600; margin-top: 5px;">Ticket Created</div>
+                    <p style="color: #aaa; font-size: 0.9rem;">User reported screen flickering on secondary Dell monitor when using HDMI.</p>
+                </div>
+                <div class="timeline-item">
+                    <div style="font-size: 0.8rem; color: #666;">April 4, 2026 - 08:15 PM</div>
+                    <div style="font-weight: 600; margin-top: 5px;">Agent Assigned: Marcus V.</div>
+                    <p style="color: #aaa; font-size: 0.9rem;">Agent Marcus is investigating driver compatibility.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function viewTicket(id, title, status) {
+            const cards = document.querySelectorAll('.ticket-card');
+            cards.forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            document.getElementById('det-title').innerText = `#${id} - ${title}`;
+            
+            const badge = document.getElementById('det-badge');
+            badge.innerText = status + " Ticket";
+            badge.className = status === 'Open' ? 'badge badge-open' : 'badge badge-closed';
+
+            const timeline = document.querySelector('.timeline');
+            if (status === 'Closed') {
+                timeline.innerHTML = `
+                    <div class="timeline-item">
+                        <div style="font-size: 0.8rem; color: #666;">March 25, 2026</div>
+                        <div style="font-weight: 600; margin-top: 5px;">Resolution Reached</div>
+                        <p style="color: #aaa; font-size: 0.9rem;">VPN client updated to v4.2. Connection stable. Ticket closed by system.</p>
+                    </div>
+                `;
+            } else {
+                timeline.innerHTML = `
+                    <div class="timeline-item">
+                        <div style="font-size: 0.8rem; color: #666;">April 4, 2026 - 08:00 PM</div>
+                        <div style="font-weight: 600; margin-top: 5px;">Ticket Created</div>
+                        <p style="color: #aaa; font-size: 0.9rem;">User reported screen flickering on secondary Dell monitor.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt Desk | Support Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-green: #4AF626;
+            --term-bg: #0D0D0D;
+            --dash-bg: #1a1d21;
+            --sidebar: #121417;
+            --card-bg: #1e2126;
+            --text-main: #e8e8e8;
+            --active-blue: #007bff;
+            --admin-gold: #ffaa00;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dash-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            background: var(--sidebar);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-brand { 
+            display: flex; 
+            align-items: center; 
+            font-weight: bold; 
+            color: var(--term-green); 
+            letter-spacing: 1px; 
+            font-family: 'Fira Code', monospace; 
+        }
+
+        .nav-logo-small {
+            height: 28px;
+            width: auto;
+            margin-right: 12px;
+            filter: drop-shadow(0 0 8px var(--term-green));
+        }
+
+        .nav-links { display: flex; align-items: center; }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid #444;
+            color: white;
+            padding: 6px 14px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        /* --- ADMIN POP-OUT STYLE --- */
+        .btn-admin-pop {
+            background: rgba(255, 170, 0, 0.1) !important;
+            border-color: var(--admin-gold) !important;
+            color: var(--admin-gold) !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: adminPulse 2s infinite;
+        }
+
+        .btn-admin-pop:hover {
+            background: var(--admin-gold) !important;
+            color: black !important;
+            box-shadow: 0 0 15px var(--admin-gold);
+        }
+
+        @keyframes adminPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
+        }
+
+        .nav-links button:hover:not(.btn-admin-pop) { background: #333; }
+        .active-nav { border-color: var(--term-green) !important; color: var(--term-green) !important; }
+
+        /* --- Header / Search --- */
+        .support-header {
+            background: var(--term-bg);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid #222;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto 0;
+            position: relative;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .support-search {
+            width: 100%;
+            background: #050505;
+            border: 1px solid var(--term-green);
+            color: var(--term-green);
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            outline: none;
+            box-shadow: 0 0 15px rgba(74, 246, 38, 0.1);
+        }
+
+        /* --- Grid Layout --- */
+        .content-section {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .kb-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .kb-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--term-green);
+        }
+
+        .kb-card h3 { margin-top: 0; color: var(--term-green); font-size: 1.1rem; }
+        .kb-card p { color: #aaa; font-size: 0.9rem; line-height: 1.5; }
+        
+        .kb-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--active-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kb-link:hover { text-decoration: underline; }
+
+        /* --- Contact Footer --- */
+        .footer-cta {
+            text-align: center;
+            padding: 40px;
+            background: var(--sidebar);
+            margin-top: auto;
+        }
+
+        .btn-ticket {
+            background: var(--term-green);
+            color: black;
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <img src="logo.png" alt="FixIt" class="nav-logo-small">
+            <span>FIXIT_DESK // SUPPORT_CENTER</span>
+        </div>
+        <div class="nav-links">
+            <button onclick="location.href='admin.html'" class="btn-admin-pop">Admin</button>
+            <button onclick="location.href='index.html'">Dashboard</button>
+            <button onclick="location.href='tickets.html'">Tickets</button>
+            <button class="active-nav">Support</button>
+            <button onclick="location.href='history.html'">History</button>
+        </div>
+    </nav>
+
+    <header class="support-header">
+        <h1 style="margin: 0; font-weight: 400;">How can we help you today?</h1>
+        <div class="search-container">
+            <span style="position: absolute; left: -110px; top: 18px; color: #444; font-size: 0.9rem;">[query_kb]:</span>
+            <input type="text" class="support-search" placeholder="Search for hardware, vpn, password..." id="kb-search">
+        </div>
+    </header>
+
+    <div class="content-section">
+        <h2 style="margin-bottom: 25px; font-size: 1.2rem;">Knowledge Base Categories</h2>
+        
+        <div class="support-grid">
+            <div class="kb-card">
+                <h3>Hardware & Peripherals</h3>
+                <p>Troubleshooting for monitors, keyboards, printers, and docking stations.</p>
+                <a href="#" class="kb-link">View 12 Articles →</a>
+            </div>
+
+            <div class="kb-card">
+                <h3>Software & Apps</h3>
+                <p>Office 365 setup, Adobe Creative Cloud, and internal proprietary software.</p>
+                <a href="#" class="kb-link">View 8 Articles →</a>
+            </div>
+
+            <div class="kb-card">
+                <h3>Network & Security</h3>
+                <p>VPN connection guides, Wi-Fi authentication, and password resets.</p>
+                <a href="#" class="kb-link">View 15 Articles →</a>
+            </div>
+
+            <div class="kb-card">
+                <h3>Onboarding</h3>
+                <p>A complete guide for setting up your workstation on your first day.</p>
+                <a href="#" class="kb-link">View 5 Articles →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-cta">
+        <p style="margin-bottom: 20px; color: #888;">Can't find what you're looking for?</p>
+        <button class="btn-ticket" onclick="location.href='index.html'">Open a New Support Ticket</button>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('kb-search');
+        
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.kb-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                const desc = card.querySelector('p').innerText.toLowerCase();
+                
+                if (title.includes(query) || desc.includes(query)) {
+                    card.style.display = 'block';
+                    card.style.borderColor = 'var(--term-green)';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            if(query === "") {
+                cards.forEach(c => c.style.borderColor = '#333');
+            }
+        });
+    </script>
+</body>
+</html>

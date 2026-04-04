@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt Desk | Secure Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --term-green: #4AF626;
+            --term-bg: #0D0D0D;
+            --dash-bg: #1a1d21;
+            --sidebar: #121417;
+            --active-blue: #007bff;
+            --text-main: #e8e8e8;
+            --admin-gold: #ffaa00;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--term-bg);
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* --- LOGO --- */
+        .term-logo-large {
+            width: 180px; height: auto; margin-bottom: 30px;
+            filter: drop-shadow(0 0 20px var(--term-green));
+        }
+
+        .nav-logo-small {
+            height: 32px; width: auto; margin-right: 15px;
+            filter: drop-shadow(0 0 8px var(--term-green));
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; font-family: 'Fira Code', monospace;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+        }
+
+        .terminal-box {
+            width: 100%; max-width: 500px; padding: 40px;
+            border: 2px solid #333; background: rgba(5, 5, 5, 0.9);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 8px;
+        }
+
+        .line-prefix { color: var(--term-green); margin-right: 10px; font-weight: bold; }
+
+        .term-input {
+            background: transparent; border: none; color: var(--term-green);
+            font-family: 'Fira Code', monospace; font-size: 1.2rem; outline: none; width: 70%;
+        }
+
+        /* --- DASHBOARD --- */
+        #dashboard { display: none; height: 100vh; flex-direction: column; }
+
+        nav {
+            background: var(--sidebar); padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #333;
+        }
+
+        .nav-brand { display: flex; align-items: center; font-weight: 800; color: var(--term-green); letter-spacing: 2px; }
+
+        .nav-links button {
+            background: transparent; border: 1px solid #444; color: white;
+            padding: 8px 18px; margin-left: 10px; cursor: pointer;
+            border-radius: 4px; font-weight: 600;
+        }
+
+        .btn-admin-pop {
+            background: rgba(255, 170, 0, 0.1) !important;
+            border-color: var(--admin-gold) !important;
+            color: var(--admin-gold) !important;
+            animation: adminPulse 2s infinite;
+        }
+
+        @keyframes adminPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 170, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
+        }
+
+        .active-nav { border-color: var(--term-green) !important; color: var(--term-green) !important; }
+
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .ticket-list { width: 300px; background: var(--sidebar); border-right: 1px solid #333; }
+        
+        .chat-window { flex: 1; display: flex; flex-direction: column; background: var(--dash-bg); }
+        .chat-messages { flex: 1; padding: 25px; overflow-y: auto; }
+        
+        .chat-input-area { 
+            padding: 20px; background: var(--sidebar); 
+            display: flex; gap: 12px; border-top: 1px solid #333; 
+        }
+
+        input[type="text"].chat-msg-input { 
+            flex: 1; background: #2a2d32; border: 1px solid #444; 
+            color: white; padding: 12px; border-radius: 6px; outline: none; 
+        }
+
+        .btn-send { background: var(--active-blue); color: white; border: none; padding: 0 25px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        
+        /* PLUS BUTTON STYLING */
+        .btn-attach { 
+            background: #333; color: white; border: 1px solid #444; 
+            padding: 0 18px; cursor: pointer; border-radius: 6px; 
+            font-size: 1.2rem; font-weight: bold; transition: 0.2s;
+        }
+        .btn-attach:hover { background: #444; border-color: var(--term-green); color: var(--term-green); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <img src="logo.png" alt="FixIt Logo" class="term-logo-large">
+        <div class="terminal-box">
+            <div style="color: #666; margin-bottom: 20px; font-size: 0.8rem; border-bottom: 1px solid #222; padding-bottom: 10px;">
+                FIXIT_DESK_CORE [v2.4.0]
+            </div>
+            <div id="user-row">
+                <span class="line-prefix">login:</span>
+                <input type="text" id="username" class="term-input" autocomplete="off" autofocus placeholder="your name">
+            </div>
+            <div id="pass-row" style="display: none; margin-top: 15px;">
+                <span class="line-prefix">password:</span>
+                <input type="password" id="password" class="term-input" value="******">
+            </div>
+            <div id="auth-loading" style="display: none; margin-top: 20px; color: var(--term-green);">
+                INITIALIZING_SESSION...
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        <nav>
+            <div class="nav-brand">
+                <img src="logo.png" alt="FixIt" class="nav-logo-small">
+                <span>FIXIT_DESK // SUPPORT</span>
+            </div>
+        
+            <div class="nav-links">
+                <button onclick="location.href='admin.html'" class="btn-admin-pop">Admin</button>
+                <button onclick="location.href='index.html'" class="active-nav">Dashboard</button>
+                <button onclick="location.href='tickets.html'">Tickets</button>
+                <button onclick="location.href='support.html'">Support</button>
+                <button onclick="location.href='history.html'">History</button>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <aside class="ticket-list">
+                <div style="padding: 20px; font-size: 0.75rem; color: #666; text-transform: uppercase;">Session Data</div>
+                <div style="padding: 20px; background: #1d2025; border-left: 4px solid var(--term-green);">
+                    <div id="display-user-name" style="font-weight: 600; color: var(--term-green);">USER: ---</div>
+                    <small style="color: #888;">Status: Active Uplink</small>
+                </div>
+            </aside>
+
+            <main class="chat-window">
+                <div class="chat-messages" id="chat-box">
+                    <div id="welcome-msg" style="color: #555; text-align: center; margin: 20px 0;">[SYSTEM_STANDBY]</div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
+                    
+                    <button id="attach-btn" class="btn-attach">+</button>
+                    <input type="text" id="user-msg-input" class="chat-msg-input" placeholder="Enter message...">
+                    <button id="send-btn" class="btn-send">SEND</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let currentUsername = "USER";
+
+        const userField = document.getElementById('username');
+        const passField = document.getElementById('password');
+        const passRow = document.getElementById('pass-row');
+        const loading = document.getElementById('auth-loading');
+        const dash = document.getElementById('dashboard');
+        const loginScreen = document.getElementById('login-screen');
+        const chatBox = document.getElementById('chat-box');
+        const msgInput = document.getElementById('user-msg-input');
+        const sendBtn = document.getElementById('send-btn');
+        const attachBtn = document.getElementById('attach-btn');
+        const screenInput = document.getElementById('screenshot-input');
+
+        // --- LOGIN LOGIC ---
+        userField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && userField.value.trim() !== '') {
+                currentUsername = userField.value.trim().toUpperCase();
+                userField.readOnly = true;
+                passRow.style.display = 'block';
+                passField.focus();
+            }
+        });
+
+        passField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                passField.readOnly = true;
+                loading.style.display = 'block';
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    dash.style.display = 'flex';
+                    document.getElementById('display-user-name').innerText = `USER: ${currentUsername}`;
+                    document.getElementById('welcome-msg').innerText = `> Welcome, ${currentUsername}. Secure channel established.`;
+                }, 1200);
+            }
+        });
+
+        // --- CHAT & REPLY LOGIC ---
+        function appendMsg(content, sender, isImage = false) {
+            const div = document.createElement('div');
+            div.style.cssText = `margin-bottom: 20px; animation: fadeIn 0.3s forwards; ${sender === currentUsername ? 'text-align: right;' : ''}`;
+            
+            const isUser = sender === currentUsername;
+            const labelColor = isUser ? 'var(--active-blue)' : 'var(--term-green)';
+            const bgColor = isUser ? '#2a2d32' : '#1d2025';
+
+            let bodyContent = isImage 
+                ? `<img src="${content}" style="max-width: 250px; border-radius: 8px; border: 1px solid #444; display: block; margin-top: 5px; margin-left: ${isUser ? 'auto' : '0'};">`
+                : `<span style="background: ${bgColor}; padding: 10px 16px; border-radius: 12px; display: inline-block; border: 1px solid #444;">${content}</span>`;
+
+            div.innerHTML = `
+                <strong style="color: ${labelColor}; font-size: 0.7rem; display: block; margin-bottom: 4px;">${sender}</strong>
+                ${bodyContent}`;
+            
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleSend() {
+            const val = msgInput.value.trim();
+            if (val !== "") {
+                appendMsg(val, currentUsername);
+                msgInput.value = "";
+                
+                setTimeout(() => {
+                    appendMsg("Acknowledged. Analyzing input...", "AGENT_MARCUS");
+                }, 1000);
+            }
+        }
+
+        // --- IMAGE ATTACHMENT LOGIC ---
+        attachBtn.addEventListener('click', () => screenInput.click());
+
+        screenInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    appendMsg(e.target.result, currentUsername, true);
+                    
+                    // Agent acknowledges the image
+                    setTimeout(() => {
+                        appendMsg("Visual data received. Running diagnostic scan on the image...", "AGENT_MARCUS");
+                    }, 1500);
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        sendBtn.addEventListener('click', handleSend);
+        msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+    </script>
+</body>
+</html>
