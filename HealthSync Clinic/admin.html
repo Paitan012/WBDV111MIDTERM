@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | HealthSync Clinical</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --trust-blue: #0052CC;
+      --trust-blue-hover: #0747A6;
+      --verified-green: #36B37E;
+      --error-red: #FF5630;
+      --navy-dark: #172B4D;
+      --slate: #6B778C;
+      --border: #DFE1E6;
+      --bg-white: #FFFFFF;
+      --bg-soft: #F4F5F7;
+      --glass-white: rgba(255, 255, 255, 0.8);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background: linear-gradient(rgba(240, 247, 255, 0.7), rgba(240, 247, 255, 0.5)), url('bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      color: var(--navy-dark);
+      min-height: 100vh;
+    }
+
+    /* --- THE GATE (LOGIN OVERLAY) --- */
+    #adminGate {
+      position: fixed;
+      inset: 0;
+      background: var(--navy-dark);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gate-card {
+      background: white;
+      padding: 3rem;
+      border-radius: 24px;
+      width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+
+    /* FIXED: Integrated circular logo into gate */
+    .logo-img-gate {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: white;
+      padding: 5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .gate-input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .gate-input:focus { border-color: var(--trust-blue); }
+    
+    .btn-enter {
+      width: 100%;
+      padding: 16px;
+      background: var(--trust-blue);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-enter:hover { background: var(--trust-blue-hover); }
+
+    .login-hint {
+      background: var(--bg-soft);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--slate);
+      margin-bottom: 20px;
+      border: 1px dashed var(--border);
+    }
+
+    /* --- DASHBOARD CONTENT --- */
+    #adminContent { display: none; width: 100%; }
+
+    .page-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: var(--bg-soft); }
+    .glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: -1; }
+    .glow-one { top: -100px; right: -100px; background: var(--trust-blue); }
+    .glow-two { bottom: -100px; left: -100px; background: var(--verified-green); }
+
+    .portal-header { background: var(--glass-white); backdrop-filter: blur(12px); padding: 1.5rem 5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .brand-block { display: flex; align-items: center; gap: 15px; }
+    
+    /* FIXED: Integrated circular logo into header */
+    .logo-img-header {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .eyebrow { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--trust-blue); margin-bottom: 2px; }
+    
+    .header-nav { display: flex; align-items: center; gap: 25px; }
+    .nav-link { text-decoration: none; color: var(--slate); font-weight: 600; font-size: 0.9rem; }
+    .portal-shell { max-width: 1400px; margin: 0 auto; padding: 3rem 5rem; }
+    
+    .portal-hero { display: grid; grid-template-columns: 1fr 400px; gap: 40px; margin-bottom: 3rem; background: var(--bg-white); padding: 3rem; border-radius: 24px; border: 1px solid var(--border); }
+    .mini-stat { background: var(--bg-soft); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 3rem; }
+    .metric-card { background: var(--bg-white); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); }
+    .metric-card strong { display: block; font-size: 2.5rem; margin: 10px 0; color: var(--navy-dark); }
+
+    .panel { background: var(--bg-white); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 2rem; }
+    .panel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+    
+    .notification-item { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--bg-soft); }
+    .notification-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); margin-top: 6px; flex-shrink: 0; }
+    .unread .notification-dot { background: var(--trust-blue); }
+    
+    .logout-button { background: var(--navy-dark); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+    .logout-button:hover { opacity: 0.9; }
+    .task-item, .list-item { margin-top: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--bg-soft); }
+  </style>
+</head>
+<body>
+
+  <div id="adminGate">
+    <div class="gate-card">
+      <img src="logo.png" alt="HealthSync" class="logo-img-gate">
+      <h2>System Admin Login</h2>
+      <p style="color: var(--slate); margin-bottom: 10px;">Executive Access Required</p>
+      
+      <div class="login-hint">
+        <strong>Demo Access:</strong><br>
+        User: admin@gmail.com | Key: admin123
+      </div>
+
+      <input type="text" id="adminUser" class="gate-input" placeholder="Admin Username">
+      <input type="password" id="adminPass" class="gate-input" placeholder="Security Key">
+      <button class="btn-enter" onclick="unlockAdmin()">Enter Dashboard</button>
+      <p id="errorMsg" style="color: var(--error-red); font-size: 0.85rem; margin-top: 15px; display: none;">Invalid credentials. Please try again.</p>
+    </div>
+  </div>
+
+  <div id="adminContent">
+    <div class="page-bg" aria-hidden="true">
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+    </div>
+
+    <header class="portal-header">
+      <div class="brand-block">
+        <img src="logo.png" alt="HealthSync" class="logo-img-header">
+        <div>
+          <p class="eyebrow">Clinical Suite</p>
+          <h1 style="font-size: 1.25rem;">HealthSync Admin</h1>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a class="nav-link" href="index.html">Patient Gateway</a>
+        <a class="nav-link" href="staff.html">Staff Portal</a>
+        <button class="logout-button" type="button" onclick="lockAdmin()">Sign Out</button>
+      </nav>
+    </header>
+
+    <main class="portal-shell">
+      <section class="portal-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Executive Oversight</p>
+          <h2>Welcome, <span id="adminNameDisplay">Administrator</span>.</h2>
+          <p>Monitoring <strong>Central Branch</strong> operations. You have full access to clinician scheduling and system-wide analytics.</p>
+        </div>
+
+        <div class="hero-side">
+          <div class="mini-stat"><span>System Status</span><strong style="color: #36B37E;">Optimal</strong></div>
+          <div class="mini-stat"><span>Active Clinicians</span><strong>18 / 22</strong></div>
+          <div class="mini-stat"><span>Avg Wait Time</span><strong>14m</strong></div>
+        </div>
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric-card">
+          <span>Daily Intake</span>
+          <strong style="color: #0052CC;">124</strong>
+          <p>Total patients processed today. (↑ 12% vs yesterday)</p>
+        </article>
+        <article class="metric-card">
+          <span>Urgent Lab Reviews</span>
+          <strong style="color: #FF5630;">03</strong>
+          <p>High-priority results flagged by the lab module.</p>
+        </article>
+        <article class="metric-card">
+          <span>Wizard Completions</span>
+          <strong style="color: #36B37E;">42</strong>
+          <p>Successfully booked via Gateway intake.</p>
+        </article>
+      </section>
+
+      <section class="panel notification-center">
+        <p class="eyebrow">Real-time Feed</p>
+        <div class="notification-header" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+          <h3>Clinical alerts requiring attention</h3>
+          <span style="font-size: 0.85rem; color: var(--slate);">3 unread</span>
+        </div>
+        <div class="notification-list">
+          <div class="notification-item unread">
+            <div class="notification-dot" style="background: #FF5630;"></div>
+            <div><strong>Critical: ER Overflow</strong><p>Volume exceeded 90% capacity.</p></div>
+          </div>
+          <div class="notification-item unread">
+            <div class="notification-dot" style="background: #0052CC;"></div>
+            <div><strong>Dr. Sarah Heart updated slots</strong><p>Extended hours added for Thursday.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-grid">
+        <article class="panel">
+          <p class="eyebrow">Task Management</p>
+          <h3>Priority Actions</h3>
+          <div class="task-item"><strong>Validate Staff Credentials</strong><p>2 new hires need verification.</p></div>
+          <div class="task-item"><strong>Approve Telehealth</strong><p>Sync Neurology consultations.</p></div>
+        </article>
+
+        <article class="panel">
+          <p class="eyebrow">Inbound Intake</p>
+          <h3>Latest Submission</h3>
+          <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 10px; margin-top: 10px;">
+            <p style="font-size: 0.8rem; font-weight: 700;">PATIENT: JONATHAN DOE</p>
+            <p style="font-size: 0.75rem; color: #6B778C;">Status: Pending Approval</p>
+          </div>
+        </article>
+
+        <article class="panel">
+          <p class="eyebrow">Branch Snapshot</p>
+          <h3>Operational Notes</h3>
+          <div class="list-item"><strong>Medical Supplies</strong><p>PPE kits below 15% threshold.</p></div>
+          <div class="list-item"><strong>IT System Sync</strong><p>Cloud backup successful at 11:00 PM.</p></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const VALID_USER = "admin@gmail.com";
+    const VALID_PASS = "admin123";
+
+    function unlockAdmin() {
+        const userInp = document.getElementById('adminUser').value;
+        const passInp = document.getElementById('adminPass').value;
+        const errorMsg = document.getElementById('errorMsg');
+
+        if (userInp === VALID_USER && passInp === VALID_PASS) {
+            sessionStorage.setItem("hs_admin_auth", "true");
+            errorMsg.style.display = "none";
+            render();
+        } else {
+            errorMsg.style.display = "block";
+            document.getElementById('adminPass').value = "";
+        }
+    }
+
+    /* FIXED: Confirms sign-out and redirects to index.html */
+    function lockAdmin() {
+        if (confirm("Are you sureee you want to sign out of the Admin Console?")) {
+            sessionStorage.removeItem("hs_admin_auth");
+            window.location.href = "index.html";
+        }
+    }
+
+    function render() {
+        // FIXED: Using sessionStorage so it requires re-login if the tab is closed
+        const isAuth = sessionStorage.getItem("hs_admin_auth") === "true";
+        
+        if (isAuth) {
+            document.getElementById('adminGate').style.display = "none";
+            document.getElementById('adminContent').style.display = "block";
+        } else {
+            document.getElementById('adminGate').style.display = "flex";
+            document.getElementById('adminContent').style.display = "none";
+            document.getElementById('adminUser').value = "";
+            document.getElementById('adminPass').value = "";
+        }
+    }
+
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' && document.getElementById('adminGate').style.display !== "none") {
+            unlockAdmin();
+        }
+    });
+
+    window.onload = render;
+  </script>
+</body>
+</html>

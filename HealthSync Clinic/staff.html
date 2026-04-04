@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Admin | HealthSync Manila</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --trust-blue: #0052CC;
+      --trust-blue-light: #E6EFFC;
+      --verified-green: #36B37E;
+      --admin-red: #DE350B;
+      --navy-dark: #172B4D;
+      --slate: #6B778C;
+      --border: #DFE1E6;
+      --bg-soft: #F4F5F7;
+      --sidebar-width: 280px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      /* BODY BACKGROUND */
+      background: linear-gradient(rgba(240, 247, 255, 0.7), rgba(240, 247, 255, 0.5)), url('bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      /* NAV BACKGROUND */
+      background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.10)), url('nav.jpg');
+      background-size: cover;
+      background-position: center;
+      border-right: 1px solid rgba(34, 160, 247, 0.2);
+      /* FIXED: Adjusted padding for better fit */
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 10;
+      backdrop-filter: blur(10px); /* Modern frosted effect */
+    }
+
+    /* FIXED: Better alignment for circular logo and text */
+    .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 3rem; }
+
+    /* FIXED: Made logo circular, highly visible, and popped with a shadow and background */
+    .logo-img { 
+      width: 42px; 
+      height: 42px; 
+      object-fit: contain; 
+      border-radius: 50%; /* Perfect circle */
+      background: white; /* Contrast against nav image */
+      padding: 4px; /* Space between edge and icon */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adds visibility and depth */
+      border: 1px solid rgba(0, 0, 0, 0.05); /* Soft definition */
+    } 
+
+    .brand h2 { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: var(--slate);
+      font-weight: 600;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .nav-item.active { background: var(--trust-blue); color: var(--trust-blue); }
+    .admin-link { margin-top: auto; border: 2px solid var(--admin-red); color: var(--admin-red); font-weight: 700; text-align: center; justify-content: center; }
+
+    /* --- CONTENT --- */
+    .app-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 2.5rem 4rem; }
+
+    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    
+    /* --- NEW AVAILABILITY BADGE --- */
+    .availability-badge {
+    /* Position at the very top right */
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    z-index: 1000; /* Ensures it stays above all other elements */
+
+    /* Aesthetic styling */
+    background: white;
+    border: 1px solid rgba(34, 160, 247, 0.2);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    /* Visual depth */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.availability-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(34, 160, 247, 0.15);
+    border-color: var(--neon-cyan);
+}
+
+/* Pulsing dot for the "Active" status */
+.pulse {
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: #00ff88;
+    opacity: 0.4;
+    animation: ripple 2s infinite;
+}
+
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 0.4; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+   .availability-badge.closed {
+    border-color: #ef4444; /* Red border for closed */
+    background: #fef2f2;
+}
+
+.availability-badge.closed .pulse {
+    background: #ef4444; /* Red pulse */
+    box-shadow: 0 0 8px #ef4444;
+}
+
+.availability-badge.closed .pulse::after {
+    background: #ef4444; /* Red ripple */
+}
+
+.availability-badge.closed #statusLabel {
+    color: #b91c1c;
+}
+
+    .header-controls { display: flex; align-items: center; gap: 15px; }
+    .btn-primary { background: var(--trust-blue); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 2rem; }
+    .stat-card { background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .stat-card span { font-size: 0.7rem; font-weight: 800; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card h3 { font-size: 1.4rem; margin-top: 8px; color: var(--navy-dark); }
+
+    .two-col { display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; }
+    .table-container { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+    .table-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #F9FAFB; padding: 15px 20px; font-size: 0.7rem; text-transform: uppercase; color: var(--slate); border-bottom: 1px solid var(--border); text-align: left; }
+    td { padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
+
+    .role-pill { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; background: #EBEEF2; color: var(--slate); white-space: nowrap; }
+    .role-doc { background: #E6EFFC; color: var(--trust-blue); }
+    .role-nurse { background: #E3FCEF; color: var(--verified-green); }
+
+    .btn-danger { background: none; border: 1px solid #FFEBE6; color: var(--admin-red); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.75rem; }
+    .btn-danger:hover { background: var(--admin-red); color: white; border-color: var(--admin-red); }
+
+    .widget { background: white; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); height: fit-content; }
+    .log-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F5F7; font-size: 0.8rem; line-height: 1.4; }
+    .log-time { color: var(--slate); font-weight: 700; font-size: 0.75rem; }
+
+    /* --- ACTIVE NAV ITEM STYLE --- */
+.nav-item.active { 
+    background: rgba(0, 82, 204, 0.1); /* Soft transparent blue */
+    color: var(--trust-blue); 
+    border: 1px solid rgba(0, 82, 204, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+/* --- SUBTLE ADMIN ACTIVE STYLE --- */
+.admin-link.active {
+    /* Uses a very soft 8% opacity version of your admin-red */
+    background: rgba(222, 53, 11, 0.08) !important; 
+    color: var(--admin-red) !important;
+    border: 1px solid rgba(222, 53, 11, 0.2) !important;
+    backdrop-filter: blur(4px);
+    box-shadow: inset 0 0 0 1px rgba(222, 53, 11, 0.1);
+}
+
+/* Optional: a slightly stronger hover so it feels interactive */
+.admin-link:hover {
+    background: rgba(222, 53, 11, 0.12) !important;
+    transition: all 0.2s ease;
+}
+
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo.png" alt="HealthSync" class="logo-img">
+      <h2>HealthSync</h2>
+    </div>
+    <nav>
+      <a href="index.html" class="nav-item">Book Appointment</a>
+      <a href="staff.html" class="nav-item active">Staff Portal</a>
+      <a href="history.html" class="nav-item">Clinical History</a>
+    </nav>
+    <a href="admin.html" class="nav-item active admin-link">System Admin</a>
+  </aside>
+
+  <main class="app-content">
+    <header class="dash-header">
+      <div>
+        <h1 style="letter-spacing: -1px;">Hospital Admin Console</h1>
+        <p id="liveDate" style="color: var(--slate); font-size: 0.9rem; font-weight: 500;"></p>
+      </div>
+      <div class="header-controls">
+        <div class="availability-badge" id="availBadge">
+            <span class="pulse" id="statusPulse"></span> 
+            <span id="statusLabel">Availability: Active</span>
+            <span class="time-display" id="liveTime">00:00:00 AM</span>
+        </div>
+        <button class="btn-primary" onclick="addNewStaff()">+ Register Personnel</button>
+      </div>
+    </header>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span>Active Payroll (₱)</span>
+        <h3 id="totalSalary">₱0.00</h3>
+      </div>
+      <div class="stat-card">
+        <span>Headcount</span>
+        <h3 id="staffCount">0</h3>
+      </div>
+      <div class="stat-card">
+        <span>Active Depts</span>
+        <h3>6</h3>
+      </div>
+      <div class="stat-card">
+        <span>Branch ID</span>
+        <h3>MNL-01</h3>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="table-container">
+        <div class="table-header">
+          <h2 style="font-size: 1.1rem;">Personnel Management</h2>
+          <input type="text" id="searchInput" placeholder="Search by name..." onkeyup="searchTable()" style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; width: 250px; outline: none;">
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Staff Name</th>
+              <th>Specialty</th>
+              <th>Role</th>
+              <th>Monthly Rate</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="staffTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="widget">
+        <h3 style="font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; color: var(--slate);">Security Audit</h3>
+        <div id="auditTrail"></div>
+      </div>
+    </div>
+  </main>
+
+<script>
+    // --- 1. DATABASE & STATE ---
+    let staffData = [
+        { id: 1, name: "Dr. Sarah Heart", dept: "Cardiology", role: "Physician", salary: 125000 },
+        { id: 2, name: "Dr. Elena Brain", dept: "Neurology", role: "Physician", salary: 135000 },
+        { id: 3, name: "Nurse Joy Reyes", dept: "Emergency", role: "Nurse", salary: 45000 },
+        { id: 4, name: "Mark Mercado", dept: "Laboratory", role: "MedTech", salary: 38000 },
+        { id: 5, name: "Paolo Santos", dept: "Pharmacy", role: "Pharmacist", salary: 42000 },
+        { id: 6, name: "Nurse Anna Go", dept: "Pediatrics", role: "Nurse", salary: 45000 },
+        { id: 7, name: "Dr. Victor Bone", dept: "Orthopedics", role: "Physician", salary: 115000 },
+        { id: 8, name: "Lisa Manoban", dept: "Radiology", role: "Technician", salary: 40000 }
+    ];
+
+    // --- 2. AVAILABILITY LOGIC ---
+    function updateAvailability() {
+        const now = new Date();
+        const hours = now.getHours();
+        
+        // Define Clinic Hours: Open 8am-5pm
+        const isOpen = (hours >= 8 && hours < 17);
+
+        // Update UI Elements
+        const badge = document.getElementById('availBadge');
+        const label = document.getElementById('statusLabel');
+        const pulse = document.getElementById('statusPulse');
+        const timeDisplay = document.getElementById('liveTime');
+
+        if (timeDisplay) timeDisplay.innerText = now.toLocaleTimeString();
+
+        if (label && pulse && badge) {
+            if (isOpen) {
+                badge.classList.remove('closed');
+                label.innerText = "Clinic Available";
+                pulse.style.background = "var(--verified-green)";
+                pulse.style.boxShadow = "0 0 8px var(--verified-green)";
+            } else {
+                badge.classList.add('closed');
+                label.innerText = "Clinic Closed";
+                pulse.style.background = "#ef4444";
+                pulse.style.boxShadow = "none";
+            }
+        }
+    }
+
+    // --- 3. STAFF MANAGEMENT LOGIC ---
+    function renderTable() {
+        const tbody = document.getElementById('staffTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        let total = 0;
+
+        staffData.forEach(s => {
+            total += s.salary;
+            const roleClass = s.role === 'Physician' ? 'role-doc' : (s.role === 'Nurse' ? 'role-nurse' : '');
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.dept}</td>
+                    <td><span class="role-pill ${roleClass}">${s.role}</span></td>
+                    <td style="font-weight: 600;">₱${s.salary.toLocaleString()}</td>
+                    <td><button class="btn-danger" onclick="deleteStaff(${s.id})">Terminate</button></td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('staffCount').innerText = staffData.length;
+        document.getElementById('totalSalary').innerText = `₱${total.toLocaleString()}`;
+    }
+
+    function addNewStaff() {
+        const name = prompt("Enter Full Name:");
+        if (!name) return;
+        const dept = prompt("Department (e.g. Cardiology):");
+        const role = prompt("Role (Physician/Nurse/Staff):");
+        const salary = parseInt(prompt("Monthly Salary (₱):")) || 0;
+
+        staffData.push({ id: Date.now(), name, dept, role, salary });
+        addLog(`Added: ${name} (${dept})`);
+        renderTable();
+    }
+
+    function deleteStaff(id) {
+        const person = staffData.find(s => s.id === id);
+        if (confirm(`Confirm permanent removal of ${person.name}?`)) {
+            staffData = staffData.filter(s => s.id !== id);
+            addLog(`System Flag: ${person.name} removed.`);
+            renderTable();
+        }
+    }
+
+    // --- 4. UTILITIES ---
+    function searchTable() {
+        const input = document.getElementById("searchInput").value.toUpperCase();
+        const rows = document.querySelectorAll("#staffTableBody tr");
+        rows.forEach(row => {
+            row.style.display = row.innerText.toUpperCase().includes(input) ? "" : "none";
+        });
+    }
+
+    function addLog(msg) {
+        const trail = document.getElementById('auditTrail');
+        if (!trail) return;
+        const now = new Date();
+        const time = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+        const item = `<div class="log-item"><span class="log-time">${time}</span> <span>${msg}</span></div>`;
+        trail.insertAdjacentHTML('afterbegin', item);
+    }
+
+    function updateHeaderDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const liveDate = document.getElementById('liveDate');
+        if (liveDate) liveDate.innerText = new Date().toLocaleDateString(undefined, options);
+    }
+
+    // --- 5. INITIALIZATION ---
+    function init() {
+        renderTable();
+        updateHeaderDate();
+        updateAvailability();
+        setInterval(updateAvailability, 1000);
+        addLog("Admin access granted to MNL-01 Node.");
+    }
+
+    // Ensure DOM is ready
+    window.onload = init;
+</script>
+</body>
+</html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthSync | Premium Clinical Suite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #22a0f7;
+      --text-main: #1c2a39;
+      --text-muted: #536b83;
+      --accent-gradient: linear-gradient(135deg, #7ad1f9 0%, #22a0f7 100%);
+      --sidebar-width: 280px;
+      --card-bg: rgba(255, 255, 255, 0.92); /* Frosted glass look */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      /* BODY BACKGROUND */
+      background: linear-gradient(rgba(240, 247, 255, 0.7), rgba(240, 247, 255, 0.5)), url('bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      /* NAV BACKGROUND */
+      background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.10)), url('nav.jpg');
+      background-size: cover;
+      background-position: center;
+      border-right: 1px solid rgba(34, 160, 247, 0.2);
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 10;
+      backdrop-filter: blur(10px); /* Modern frosted effect */
+    }
+
+   /* --- CIRCULAR IMAGE LOGO --- */
+/* --- CIRCULAR IMAGE LOGO --- */
+.logo-img-circle { 
+    width: 42px !important;    /* Force width */
+    height: 42px !important;   /* Force height */
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid rgba(34, 160, 247, 0.2); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: block;            /* Ensures it behaves as a block element */
+    flex-shrink: 0;            /* Prevents the sidebar from squeezing it */
+}
+
+.brand { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    margin-bottom: 1rem;       /* This keeps the nav right under it */
+}
+
+.brand h2 { 
+    font-size: 1.3rem; 
+    font-weight: 700; 
+    color: var(--text-main); 
+    margin: 0; 
+}
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .nav-item:hover { background: rgba(34, 160, 247, 0.1); color: var(--neon-cyan); }
+    .nav-item.active { 
+        background: white; 
+        color: var(--neon-cyan); 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid rgba(34, 160, 247, 0.2); 
+    }
+
+    /* --- MAIN CONTENT --- */
+    .app-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 3rem 5rem; width: calc(100% - var(--sidebar-width)); }
+    
+    .availability-badge {
+    /* Position at the very top right */
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    z-index: 1000; /* Ensures it stays above all other elements */
+
+    /* Aesthetic styling */
+    background: white;
+    border: 1px solid rgba(34, 160, 247, 0.2);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    /* Visual depth */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.availability-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(34, 160, 247, 0.15);
+    border-color: var(--neon-cyan);
+}
+
+/* Pulsing dot for the "Active" status */
+.pulse {
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: #00ff88;
+    opacity: 0.4;
+    animation: ripple 2s infinite;
+}
+
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 0.4; }
+    100% { transform: scale(2.5); opacity: 0; }
+}
+
+.availability-badge.closed {
+    border-color: #ef4444; /* Red border for closed */
+    background: #fef2f2;
+}
+
+.availability-badge.closed .pulse {
+    background: #ef4444; /* Red pulse */
+    box-shadow: 0 0 8px #ef4444;
+}
+
+.availability-badge.closed .pulse::after {
+    background: #ef4444; /* Red ripple */
+}
+
+.availability-badge.closed #statusLabel {
+    color: #b91c1c;
+}
+
+    /* --- WIZARD DESIGN --- */
+    .wizard-card { 
+    /* Semi-transparent white background */
+    background: rgba(255, 255, 255, 0.4); 
+    
+    /* High blur for the "frosted" look */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px); /* Safari support */
+    
+    /* Subtle white border to simulate glass thickness */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px; 
+    
+    padding: 4rem; 
+    max-width: 850px; 
+    
+    /* Softer, more spread-out shadow */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    
+    /* Optional: adds a slight inner glow */
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 
+                0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+    .progress-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4rem; }
+    .p-step { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+    .p-step.active { color: var(--neon-cyan); }
+    
+    .p-line { flex-grow: 1; height: 3px; background: #e0eaf4; margin: 0 20px; position: relative; border-radius: 10px; }
+    .p-line-fill { position: absolute; height: 100%; background: var(--neon-cyan); width: 0%; transition: 0.6s ease; }
+
+    .wizard-step { display: none; }
+    .wizard-step.active { display: block; animation: slideUp 0.4s ease forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .full { grid-column: span 2; }
+    .field label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 0.85rem; }
+    
+    input, select { 
+        width: 100%; padding: 16px; 
+        border: 1.5px solid #e0eaf4; 
+        border-radius: 12px; 
+        background: white; 
+        outline: none; transition: 0.3s;
+    }
+    input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 4px rgba(34, 160, 247, 0.1); }
+
+    .nav-buttons { display: flex; justify-content: space-between; margin-top: 4rem; }
+    .btn-next { 
+        background: var(--accent-gradient); color: white; border: none; padding: 16px 40px; 
+        border-radius: 12px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(34, 160, 247, 0.3);
+    }
+    .btn-back { background: none; border: none; color: var(--text-muted); font-weight: 700; cursor: pointer; }
+
+    #summaryGrid { background: rgba(34, 160, 247, 0.05); padding: 30px; border-radius: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .summary-item span { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); }
+    .summary-item strong { color: var(--neon-cyan); font-size: 1.1rem; }
+
+    .auth-section { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); }
+    .btn-auth { width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; margin-bottom: 8px; }
+    .btn-login { background: #1c2a39; color: white; }
+    .btn-reg { background: var(--neon-cyan); color: white; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .modal-content { background: white; padding: 40px; border-radius: 20px; width: 400px; text-align: center; }
+
+    /* --- SUBTLE ADMIN ACTIVE STYLE --- */
+.admin-link.active {
+    /* Uses a very soft 8% opacity version of your admin-red */
+    background: rgba(222, 53, 11, 0.08) !important; 
+    color: var(--admin-red) !important;
+    border: 1px solid rgba(222, 53, 11, 0.2) !important;
+    backdrop-filter: blur(4px);
+    box-shadow: inset 0 0 0 1px rgba(222, 53, 11, 0.1);
+}
+
+/* Optional: a slightly stronger hover so it feels interactive */
+.admin-link:hover {
+    background: rgba(222, 53, 11, 0.12) !important;
+    transition: all 0.2s ease;
+}
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand">
+    <img src="logo.png" alt="HealthSync" class="logo-img-circle">
+    <h2>HealthSync</h2>
+</div>
+    </div>
+    <nav>
+      <a href="index.html" class="nav-item active">Book Appointment</a>
+      <a href="staff.html" class="nav-item">Staff Portal</a>
+      <a href="history.html" class="nav-item">Clinical History</a>
+    </nav>
+
+    <div class="auth-section" id="sidebarAuth"></div>
+    <a href="admin.html" class="nav-item active admin-link">System Admin</a>
+  </aside>
+
+  <main class="app-content">
+    <header class="header-area">
+      <div>
+        <p style="color:var(--neon-cyan); font-weight:800; font-size:0.75rem; text-transform:uppercase;">Patient Portal</p>
+        <h1 id="mainTitle">Clinical Intake Form</h1>
+      </div>
+      <div class="availability-badge">
+        <span class="pulse" id="statusPulse"></span> 
+        <span id="statusLabel">Available</span>
+        <span style="border-left:1px solid #ddd; padding-left:12px; color:var(--text-muted); font-family:monospace;" id="liveTime">00:00:00</span>
+      </div>
+    </header>
+
+    <div class="wizard-card">
+    <div class="progress-container">
+  <span class="p-step active" id="ps1">Identity</span>
+  <div class="p-line"><div class="p-line-fill" id="fill1"></div></div>
+  
+  <span class="p-step" id="ps2">Specialty</span>
+  <div class="p-line"><div class="p-line-fill" id="fill2"></div></div>
+  
+  <span class="p-step" id="ps3">Schedule</span>
+  <div class="p-line"><div class="p-line-fill" id="fill3"></div></div>
+  
+  <span class="p-step" id="ps4">Finish</span>
+</div>
+
+     <div class="wizard-step active" id="step1">
+  <h2>Identity Details</h2>
+  <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
+    Please provide your legal information as it appears on your medical records.
+  </p>
+  
+  <div class="input-grid">
+    <div class="field">
+      <label>First Name</label>
+      <input type="text" id="fname" placeholder="e.g. John" required>
+    </div>
+    <div class="field">
+      <label>Last Name</label>
+      <input type="text" id="lname" placeholder="e.g. Doe" required>
+    </div>
+
+    <div class="field">
+      <label>Date of Birth</label>
+      <input type="date" id="dob" required>
+    </div>
+    <div class="field">
+      <label>Phone Number</label>
+      <input type="tel" id="phone" placeholder="+63 000 000 0000" required>
+    </div>
+
+    <div class="field full">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="john.doe@example.com" required>
+    </div>
+
+    <div class="field full">
+      <label>Residential Address</label>
+      <input type="text" id="address" placeholder="Street, City, Province">
+    </div>
+  </div>
+</div>
+
+        <div class="wizard-step" id="step2">
+  <h2>Clinical Department & Service</h2>
+  <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">
+    Select the specific clinical department and the type of healthcare professional you wish to consult.
+  </p>
+
+  <div class="input-grid">
+    <div class="field full">
+      <label>Medical Specialty</label>
+      <select id="specialty" required>
+        <option value="">-- Select Specialty --</option>
+        <option value="Cardiology">Cardiology</option>
+        <option value="Neurology">Neurology</option>
+        <option value="Pediatrics">Pediatrics</option>
+        <option value="General Medicine">General Medicine</option>
+        <option value="Laboratory">Laboratory & Diagnostics</option>
+        <option value="Pharmacy">Pharmaceutical Services</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label>Service Provider Type</label>
+      <select id="providerType" required>
+        <option value="">-- Select Provider Type --</option>
+        <option value="Physician">Specialist Physician (MD)</option>
+        <option value="Pharmacist">Clinical Pharmacist</option>
+        <option value="MedTech">Medical Technologist (Laboratory)</option>
+        <option value="Technician">Radiology/Clinical Technician</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label>Reason for Visit</label>
+      <select id="visitReason">
+        <option value="Consultation">Regular Consultation</option>
+        <option value="Lab Work">Laboratory Test / Blood Work</option>
+        <option value="Prescription">Prescription Refill/Review</option>
+        <option value="Imaging">Diagnostic Imaging (X-Ray/Scan)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+        <div class="wizard-step" id="step3">
+          <h2>Practitioner & Date</h2>
+          <div class="input-grid">
+            <div class="field"><label>Doctor</label><select id="doctor" required><option value="">Select Specialty First</option></select></div>
+            <div class="field"><label>Date</label><input type="date" id="date" required></div>
+          </div>
+        </div>
+
+        <div class="wizard-step" id="step4">
+          <h2>Review Submission</h2>
+          <div id="summaryGrid"></div>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn-back" id="backBtn" style="visibility:hidden;">Back</button>
+          <button type="button" class="btn-next" id="nextBtn">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </main>
+  
+
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Login</h2>
+      <div style="margin-top:20px;">
+        <input type="text" id="authName" placeholder="Full Name" style="margin-bottom:10px; display:none;">
+        <input type="email" id="authEmail" placeholder="Email" style="margin-bottom:10px;">
+        <input type="password" id="authPass" placeholder="Password" style="margin-bottom:20px;">
+        <button class="btn-auth btn-reg" onclick="submitAuth()">Submit</button>
+        <button class="btn-auth" style="background:none; color:var(--text-muted);" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+ <script>
+    const doctors = {
+        "Cardiology": ["Dr. Sarah Heart", "Dr. James Pulse"],
+        "Neurology": ["Dr. Elena Brain", "Dr. Marcus Nerve"],
+        "Pediatrics": ["Dr. Baby Care", "Dr. Mini Health"],
+        "General Medicine": ["Dr. Alice Walker", "Dr. Robert Smith"],
+        "Laboratory": ["Main Lab - Station A", "Main Lab - Station B"],
+        "Pharmacy": ["Clinical Pharma Desk"]
+    };
+
+    let currentStep = 1;
+
+    // --- AUTH LOGIC ---
+    function updateAuthUI() {
+        const sidebar = document.getElementById('sidebarAuth');
+        const user = localStorage.getItem('hs_user');
+        if (sidebar) {
+            if (user) {
+                sidebar.innerHTML = `<p style="font-size:0.8rem; text-align:center; margin-bottom:10px;">Logged as <b>${user}</b></p>
+                                     <button class="btn-auth btn-login" onclick="logout()">Logout</button>`;
+            } else {
+                sidebar.innerHTML = `<button class="btn-auth btn-login" onclick="openModal(true)">Login</button>
+                                     <button class="btn-auth btn-reg" onclick="openModal(false)">Register</button>`;
+            }
+        }
+    }
+
+    function openModal(login) {
+        document.getElementById('modalTitle').innerText = login ? "Login" : "Register";
+        document.getElementById('authName').style.display = login ? "none" : "block";
+        document.getElementById('authModal').style.display = "flex";
+    }
+
+    function closeModal() { document.getElementById('authModal').style.display = "none"; }
+
+    function submitAuth() {
+        const email = document.getElementById('authEmail').value;
+        if(!email) return alert("Email required");
+        localStorage.setItem('hs_user', email);
+        closeModal();
+        updateAuthUI();
+    }
+
+    function logout() { localStorage.removeItem('hs_user'); updateAuthUI(); }
+
+    // --- WIZARD LOGIC ---
+    const nextBtn = document.getElementById('nextBtn');
+    const backBtn = document.getElementById('backBtn');
+    const specialtySelect = document.getElementById('specialty');
+
+    specialtySelect.onchange = function() {
+        const docSelect = document.getElementById('doctor');
+        docSelect.innerHTML = '<option value="">-- Choose --</option>';
+        if(doctors[this.value]) {
+            doctors[this.value].forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                docSelect.appendChild(opt);
+            });
+        }
+    };
+
+    nextBtn.onclick = () => {
+        // 1. Validate Step 1
+        if (currentStep === 1) {
+            const fields = ['fname', 'lname', 'dob', 'phone', 'email'];
+            for (let id of fields) {
+                const el = document.getElementById(id);
+                if (!el.value) {
+                    el.reportValidity();
+                    return;
+                }
+            }
+        } 
+        // 2. Validate Step 2
+        else if (currentStep === 2) {
+            const specialty = document.getElementById('specialty');
+            const providerType = document.getElementById('providerType');
+            if (!specialty.value || !providerType.value) {
+                if (!specialty.value) specialty.reportValidity();
+                else providerType.reportValidity();
+                return;
+            }
+        }
+        // 3. Validate Step 3
+        else if (currentStep === 3) {
+            const doctor = document.getElementById('doctor');
+            const date = document.getElementById('date');
+            if (!doctor.value || !date.value) {
+                if (!doctor.value) doctor.reportValidity();
+                else date.reportValidity();
+                return;
+            }
+        }
+
+        // --- MOVE FORWARD LOGIC ---
+        if (currentStep < 4) {
+            currentStep++;
+            updateWizard();
+        } else {
+            alert("Appointment Confirmed! Thank you for choosing HealthSync.");
+            location.reload();
+        }
+    };
+
+    backBtn.onclick = () => { 
+        if(currentStep > 1) {
+            currentStep--; 
+            updateWizard(); 
+        }
+    };
+
+    function updateWizard() {
+        // 1. Show/Hide Steps
+        document.querySelectorAll('.wizard-step').forEach((s, i) => {
+            s.classList.toggle('active', i + 1 === currentStep);
+        });
+
+        // 2. Highlight step labels
+        document.querySelectorAll('.p-step').forEach((s, i) => {
+            s.classList.toggle('active', i + 1 <= currentStep);
+        });
+
+        // 3. Fill the lines
+        document.getElementById('fill1').style.width = currentStep > 1 ? "100%" : "0%";
+        document.getElementById('fill2').style.width = currentStep > 2 ? "100%" : "0%";
+        document.getElementById('fill3').style.width = currentStep > 3 ? "100%" : "0%";
+
+        // 4. Update Buttons
+        backBtn.style.visibility = currentStep === 1 ? "hidden" : "visible";
+        nextBtn.innerText = currentStep === 4 ? "Confirm Booking" : "Continue";
+
+        // 5. Generate Summary (Final Step)
+        if(currentStep === 4) {
+            const name = document.getElementById('fname').value + " " + document.getElementById('lname').value;
+            const spec = document.getElementById('specialty').value;
+            const type = document.getElementById('providerType').value;
+            const reason = document.getElementById('visitReason').value;
+            const doc = document.getElementById('doctor').value;
+            const date = document.getElementById('date').value;
+
+            document.getElementById('summaryGrid').innerHTML = `
+                <div class="summary-item"><span>Patient</span><strong>${name}</strong></div>
+                <div class="summary-item"><span>Dept/Role</span><strong>${spec} (${type})</strong></div>
+                <div class="summary-item"><span>Practitioner</span><strong>${doc}</strong></div>
+                <div class="summary-item"><span>Reason</span><strong>${reason}</strong></div>
+                <div class="summary-item"><span>Date</span><strong>${date}</strong></div>
+            `;
+        }
+    }
+
+    function updateClinicStatus() {
+        const now = new Date();
+        const hours = now.getHours();
+        const openHour = 8;
+        const closeHour = 17;
+        const badge = document.querySelector('.availability-badge');
+        const statusLabel = document.getElementById('statusLabel');
+        const timeDisplay = document.getElementById('liveTime');
+
+        timeDisplay.innerText = now.toLocaleTimeString();
+        const isOpen = hours >= openHour && hours < closeHour;
+
+        if (isOpen) {
+            statusLabel.innerText = "Clinic Available";
+            badge.classList.remove('closed');
+            document.getElementById('statusPulse').style.background = "#00ff88";
+        } else {
+            statusLabel.innerText = "Clinic Closed";
+            badge.classList.add('closed');
+            document.getElementById('statusPulse').style.background = "#ef4444";
+        }
+    }
+
+    setInterval(updateClinicStatus, 1000);
+    window.onload = () => {
+        updateAuthUI();
+        updateClinicStatus();
+        updateWizard(); 
+    };
+</script>
+
+</body>
+</html>

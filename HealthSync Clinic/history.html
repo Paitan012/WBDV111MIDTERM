@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electronic Health Record | HealthSync</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --trust-blue: #0052CC;
+      --navy-dark: #172B4D;
+      --slate: #6B778C;
+      --border: #DFE1E6;
+      --bg-soft: #F4F5F7;
+      --sidebar-width: 280px;
+      --clinical-purple: #5243AA;
+      --verified-green: #36B37E;
+      --error-red: #FF5630;
+      --admin-red: #DE350B; /* Added for consistency */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      /* BODY BACKGROUND */
+      background: linear-gradient(rgba(240, 247, 255, 0.7), rgba(240, 247, 255, 0.5)), url('bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      color: var(--navy-dark);
+      min-height: 100vh;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: var(--sidebar-width);
+      /* NAV BACKGROUND */
+      background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.10)), url('nav.jpg');
+      background-size: cover;
+      background-position: center;
+      border-right: 1px solid rgba(34, 160, 247, 0.2);
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 10;
+      backdrop-filter: blur(10px); /* Modern frosted effect */
+    }
+
+    /* FIXED: Aligned brand with circular logo */
+    .brand { display: flex; align-items: center; gap: 15px; margin-bottom: 3rem; }
+
+    /* FIXED: Logo made circular and highly visible */
+    .logo-img { 
+      width: 42px; 
+      height: 42px; 
+      object-fit: contain; 
+      border-radius: 50%; 
+      background: white; 
+      padding: 4px; 
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    } 
+
+    .brand h2 { font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); }
+
+    .nav-item { 
+        display: flex; 
+        align-items: center; 
+        padding: 12px 16px; 
+        text-decoration: none; 
+        color: var(--slate); 
+        font-weight: 600; 
+        border-radius: 10px; 
+        margin-bottom: 8px; 
+        transition: 0.2s;
+    }
+
+    /* FIXED: Active Nav Style */
+    .nav-item.active { 
+        background: rgba(0, 82, 204, 0.1); 
+        color: var(--trust-blue); 
+        border: 1px solid rgba(0, 82, 204, 0.1);
+        backdrop-filter: blur(4px);
+    }
+    
+    .admin-link {
+        margin-top: auto; 
+        border: 2px solid var(--admin-red); 
+        color: var(--admin-red); 
+        font-weight: 700; 
+        text-align: center; 
+        justify-content: center; 
+    }
+
+    /* FIXED: Admin Active Style */
+    .admin-link.active {
+        background: rgba(222, 53, 11, 0.08) !important; 
+        color: var(--admin-red) !important;
+        border: 1px solid rgba(222, 53, 11, 0.2) !important;
+        backdrop-filter: blur(4px);
+    }
+
+    /* --- MAIN CONTENT --- */
+    .app-content { margin-left: var(--sidebar-width); flex-grow: 1; padding: 2.5rem 4rem; }
+    
+    header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; }
+
+    .availability-badge {
+        position: fixed;
+        top: 20px;
+        right: 25px;
+        z-index: 1000;
+        background: white;
+        border: 1px solid rgba(34, 160, 247, 0.2);
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .pulse {
+        width: 8px;
+        height: 8px;
+        background: #00ff88;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .pulse::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background: #00ff88;
+        opacity: 0.4;
+        animation: ripple 2s infinite;
+    }
+
+    @keyframes ripple {
+        0% { transform: scale(1); opacity: 0.4; }
+        100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    .availability-badge.closed {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .availability-badge.closed .pulse, .availability-badge.closed .pulse::after {
+        background: #ef4444;
+    }
+
+    .availability-badge.closed #statusLabel {
+        color: #b91c1c;
+    }
+
+    .ehr-container { display: grid; grid-template-columns: 1fr 350px; gap: 25px; }
+
+    /* --- CLINICAL SECTIONS --- */
+    .medical-card { background: white; border-radius: 16px; border: 1px solid var(--border); padding: 2rem; margin-bottom: 1.5rem; }
+    .section-title { font-size: 0.8rem; font-weight: 800; color: var(--clinical-purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .section-title::after { content: ""; flex-grow: 1; height: 1px; background: var(--border); }
+
+    .entry { border-left: 3px solid var(--trust-blue); padding-left: 20px; margin-bottom: 2rem; position: relative; }
+    .entry-meta { font-size: 0.85rem; color: var(--slate); margin-bottom: 5px; font-weight: 600; }
+    .entry-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--navy-dark); }
+    
+    .soap-box { background: var(--bg-soft); padding: 15px; border-radius: 8px; font-size: 0.9rem; margin-top: 10px; }
+    .soap-label { font-weight: 800; color: var(--slate); font-size: 0.7rem; text-transform: uppercase; margin-right: 5px; }
+
+    /* --- SIDEBAR WIDGETS --- */
+    .sticky-sidebar { position: sticky; top: 2.5rem; }
+    .vitals-summary { background: var(--navy-dark); color: white; padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; }
+    .vital-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+    
+    .allergy-list { background: #FFEBE6; border: 1px solid #FF5630; padding: 1rem; border-radius: 12px; color: #BF2600; }
+    .allergy-item { font-weight: 700; font-size: 0.85rem; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo.png" alt="HealthSync" class="logo-img">
+      <h2>HealthSync</h2>
+    </div>
+    <nav>
+      <a href="index.html" class="nav-item">Book Appointment</a>
+      <a href="staff.html" class="nav-item">Staff Portal</a>
+      <a href="history.html" class="nav-item active">Clinical History</a>
+    </nav>
+    <a href="admin.html" class="nav-item admin-link">System Admin</a>
+  </aside>
+
+  <main class="app-content">
+    <header>
+      <div>
+        <h1 style="font-size: 2rem;">Patient Clinical Record</h1>
+        <p style="color: var(--slate);">Last Updated: <strong id="lastUpdated">April 01, 2026</strong></p>
+      </div>
+      <div class="availability-badge" id="availBadge">
+        <span class="pulse" id="statusPulse"></span> 
+        <span id="statusLabel">Availability: Active</span>
+        <span class="time-display" id="liveTime">00:00:00 AM</span>
+      </div>
+    </header>
+
+    <div class="ehr-container">
+      <div class="main-record">
+        
+        <div class="medical-card">
+          <div class="section-title">History of Present Illness (HPI)</div>
+          
+          <div class="entry">
+            <div class="entry-meta">Case Ref: #CARD-882 | Dr. Sarah Heart</div>
+            <div class="entry-title">Chronic Hypertension Follow-up</div>
+            <p style="font-size: 0.95rem; line-height: 1.6;">Patient presents for a 3-month review of essential hypertension. Reports occasional dizziness when standing quickly. Adherence to Losartan 50mg is confirmed. No chest pain or shortness of breath reported.</p>
+            
+            <div class="soap-box">
+              <p><span class="soap-label">Plan:</span> Increase dosage to 100mg daily. Schedule follow-up Lab (Lipid Profile) in 2 weeks.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="medical-card">
+          <div class="section-title">Past Medical History (PMH)</div>
+          <ul style="list-style: none; font-size: 0.95rem;">
+            <li style="margin-bottom: 10px;"><strong>2021:</strong> Appendectomy (St. Luke's Medical Center)</li>
+            <li style="margin-bottom: 10px;"><strong>2018:</strong> Diagnosed with Type 2 Diabetes Mellitus</li>
+            <li style="margin-bottom: 10px;"><strong>2015:</strong> Right Ankle Fracture (Sports Injury)</li>
+          </ul>
+        </div>
+
+        <div class="medical-card">
+            <div class="section-title">Social & Family History</div>
+            <div style="font-size: 0.9rem; color: var(--slate); line-height: 1.5;">
+                <strong>Social:</strong> Non-smoker. Occasional alcohol consumption (1-2 units/week). Works as a Software Engineer (Sedentary).<br><br>
+                <strong>Family:</strong> Father deceased (Myocardial Infarction at 62). Mother living (Hypertension & Arthritis).
+            </div>
+        </div>
+
+      </div>
+
+      <div class="sticky-sidebar">
+        <div class="vitals-summary">
+            <h3 style="font-size: 0.8rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 15px;">Latest Vitals</h3>
+            <div class="vital-item"><span>Blood Pressure</span><strong>140/90 mmHg</strong></div>
+            <div class="vital-item"><span>Heart Rate</span><strong>78 BPM</strong></div>
+            <div class="vital-item"><span>SpO2</span><strong>98%</strong></div>
+            <div class="vital-item"><span>Temperature</span><strong>36.6°C</strong></div>
+            <div class="vital-item" style="border:none;"><span>Weight</span><strong>72.5 kg</strong></div>
+        </div>
+
+        <div class="allergy-list">
+            <h3 style="font-size: 0.8rem; text-transform: uppercase;">⚠️ Critical Allergies</h3>
+            <div class="allergy-item">• Penicillin (Anaphylaxis)</div>
+            <div class="allergy-item">• Shellfish (Urticaria)</div>
+        </div>
+
+        <div class="medical-card" style="margin-top: 1.5rem; padding: 1.2rem;">
+            <h3 style="font-size: 0.8rem; text-transform: uppercase; color: var(--slate); margin-bottom: 10px;">Active Medications</h3>
+            <p style="font-size: 0.85rem;"><strong>Losartan</strong> - 100mg (1x Daily)</p>
+            <p style="font-size: 0.85rem; margin-top: 5px;"><strong>Metformin</strong> - 500mg (2x Daily)</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function updateClinicStatus() {
+        const now = new Date();
+        const hours = now.getHours();
+        const openHour = 8;
+        const closeHour = 17;
+
+        const badge = document.getElementById('availBadge');
+        const statusLabel = document.getElementById('statusLabel');
+        const pulse = document.getElementById('statusPulse');
+        const timeDisplay = document.getElementById('liveTime');
+
+        timeDisplay.innerText = now.toLocaleTimeString();
+
+        const isOpen = hours >= openHour && hours < closeHour;
+
+        if (isOpen) {
+            statusLabel.innerText = "Clinic Available";
+            badge.classList.remove('closed');
+            pulse.style.background = "#00ff88";
+        } else {
+            statusLabel.innerText = "Clinic Closed";
+            badge.classList.add('closed');
+            pulse.style.background = "#ef4444";
+        }
+    }
+
+    setInterval(updateClinicStatus, 1000);
+    window.onload = () => {
+        updateClinicStatus();
+    };
+  </script>
+</body>
+</html>
