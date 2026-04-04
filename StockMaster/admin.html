@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMaster | Admin Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+<style>
+/* --- STOCKMASTER GLOBAL INDUSTRIAL STYLESHEET --- */
+:root {
+    --bg: #ffffff;
+    --black: #000000;
+    --gray: #e0e0e0;
+    --border-width: 4px;
+    --accent: #00ff41; 
+    --alert-red: #ff4545; 
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+/* --- AUTH OVERLAY --- */
+#adminGate {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 10000;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-panel {
+    background: white;
+    border: 8px solid var(--alert-red);
+    padding: 40px;
+    width: 450px;
+    box-shadow: 15px 15px 0px var(--alert-red);
+}
+
+.auth-header {
+    background: var(--alert-red);
+    color: white;
+    padding: 10px;
+    font-family: 'Archivo Black', sans-serif;
+    margin: -40px -40px 30px -40px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* --- Layout --- */
+.main-layout {
+    display: none; 
+    height: 100%;
+    border: var(--border-width) solid var(--black);
+}
+
+.sidebar {
+    width: 320px;
+    background: var(--black);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    border-right: var(--border-width) solid var(--black);
+}
+
+.brand-box { 
+    padding: 20px 10px;
+    border-bottom: 1px solid #333; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.brand-logo {
+    width: 190px;
+    height: auto;
+    border: var(--border-width) solid white;
+    background: white;
+    margin-bottom: 25px;
+    padding: 10px;
+    object-fit: contain;
+}
+
+.nav-stack { flex-grow: 1; }
+.nav-link {
+    display: block;
+    padding: 25px;
+    color: white;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #333;
+}
+.nav-link:hover, .nav-link.active { background: white; color: black; }
+
+.workspace { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg); }
+
+.status-bar {
+    padding: 20px;
+    border-bottom: var(--border-width) solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+    font-size: 0.7rem;
+}
+
+/* --- Dashboard Specifics --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.panel {
+    border: var(--border-width) solid var(--black);
+    background: white;
+}
+
+.panel-label {
+    background: var(--black);
+    color: white;
+    padding: 5px 15px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.stat-box {
+    padding: 20px;
+}
+
+.big-stat {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+.alert-strip {
+    background: #fffbe6;
+    border: 2px dashed var(--black);
+    padding: 10px;
+    margin: 15px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.industrial-input {
+    width: 100%;
+    border: 3px solid var(--black);
+    padding: 15px;
+    font-family: inherit;
+    font-weight: 800;
+    margin-bottom: 10px;
+    outline: none;
+}
+
+.action-btn {
+    background: var(--black);
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.action-btn:hover { background: var(--accent); color: black; }
+
+.terminal-log {
+    background: #1a1a1a;
+    color: var(--accent);
+    padding: 15px;
+    font-size: 0.75rem;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.info-btn {
+    width: 100%;
+    padding: 30px;
+    background: var(--alert-red);
+    color: white;
+    border: none;
+    font-family: 'Archivo Black', sans-serif;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+</style>
+</head>
+<body>
+
+    <div id="adminGate">
+        <div class="auth-panel">
+            <div class="auth-header">Identity Verification Required</div>
+            <div style="margin-bottom: 20px; font-size: 0.8rem; background: #eee; padding: 10px; border: 1px solid #ccc; font-weight: 800;">
+                SYSTEM_HINT: admin@gmail.com / admin123
+            </div>
+            <input type="text" id="adminUser" class="industrial-input" placeholder="OPERATOR_ID">
+            <input type="password" id="adminPass" class="industrial-input" placeholder="SECURITY_CODE">
+            <button class="action-btn" style="background: var(--alert-red);" onclick="unlockAdmin()">Authorize Access</button>
+            <p id="error" style="color: var(--alert-red); display: none; margin-top:10px; font-weight: 800;">[ERROR] ACCESS_DENIED</p>
+        </div>
+    </div>
+
+    <div id="adminContent" class="main-layout">
+        <aside class="sidebar">
+            <div class="brand-box">
+                <img src="logo.png" alt="StockMaster Logo" class="brand-logo">
+            </div>
+            <nav class="nav-stack">
+                <a href="#" class="nav-link">DASHBOARD</a>
+                <a href="#" class="nav-link">INVENTORY</a>
+                <a href="#" class="nav-link">REPORTS</a>
+                <a href="#" class="nav-link active">ADMIN_SETTINGS</a>
+            </nav>
+            <button class="info-btn" onclick="lockAdmin()">TERMINATE_SESSION</button>
+        </aside>
+
+        <main class="workspace">
+            <header class="status-bar" style="background: var(--alert-red); color: white;">
+                <div>ADMIN_MODE // ROOT_USER: SESSION_ACTIVE</div>
+                <div>04.04.2026 // 16:20</div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="panel">
+                    <div class="panel-label">SYSTEM_OVERVIEW</div>
+                    <div class="stat-box">
+                        <p style="font-size: 0.7rem;">TOTAL_ITEMS_TRACKED</p>
+                        <div class="big-stat">1,284</div>
+                        <div class="alert-strip">⚠️ 12 ITEMS BELOW CRITICAL THRESHOLD</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-label">MANAGE_OPERATORS</div>
+                    <div style="padding: 20px;">
+                        <input type="text" class="industrial-input" placeholder="NEW_OPERATOR_NAME">
+                        <button class="action-btn">GENERATE_NEW_ID</button>
+                    </div>
+                </div>
+
+                <div class="panel" style="grid-column: span 2;">
+                    <div class="panel-label">SECURITY_TERMINAL_OUTPUT</div>
+                    <div class="terminal-log">
+                        [16:15:02] CONNECTION_ESTABLISHED: 127.0.0.1<br>
+                        [16:15:05] AUTH_SUCCESS: admin@gmail.com<br>
+                        [16:16:10] VIEWING: ADMIN_SETTINGS<br>
+                        [16:18:44] REFRESHING_DATABASE... SUCCESS<br>
+                        > _
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Force login on load so people can't just bypass the gate via URL
+        localStorage.removeItem("sm_auth");
+
+        function unlockAdmin() {
+            const u = document.getElementById('adminUser').value;
+            const p = document.getElementById('adminPass').value;
+            if (u === "admin@gmail.com" && p === "admin123") {
+                localStorage.setItem("sm_auth", "true");
+                document.getElementById('adminGate').style.display = "none";
+                document.getElementById('adminContent').style.display = "flex";
+            } else {
+                document.getElementById('error').style.display = "block";
+            }
+        }
+
+        function lockAdmin() {
+            // 1. Wipe the auth key
+            localStorage.removeItem("sm_auth");
+            // 2. Redirect back to the main site
+            window.location.href = "index.html"; 
+        }
+    </script>
+</body>
+</html>

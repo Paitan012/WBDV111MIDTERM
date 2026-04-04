@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMaster | Order Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+<style>
+/* STOCKMASTER GLOBAL INDUSTRIAL STYLESHEET */
+:root {
+    --bg: #ffffff;
+    --black: #000000;
+    --gray: #e0e0e0;
+    --border-width: 4px;
+    --accent: #00ff41; 
+    --alert-red: #ff4545;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-layout {
+    display: flex;
+    height: 100%;
+    border: var(--border-width) solid var(--black);
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 320px;
+    background: var(--black);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    border-right: var(--border-width) solid var(--black);
+}
+
+.brand-box { 
+    padding: 20px 10px;
+    border-bottom: 1px solid #333; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+}
+
+.brand-logo {
+    width: 190px;
+    height: auto;
+    border: var(--border-width) solid white;
+    background: white;
+    margin-bottom: 25px;
+    padding: 10px;
+    object-fit: contain;
+}
+
+.nav-stack { flex-grow: 1; }
+
+.nav-link {
+    display: block;
+    padding: 25px;
+    color: white;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #333;
+    transition: 0.15s ease-in-out;
+}
+
+.nav-link:hover { background: #222; color: var(--accent); }
+.nav-link.active { background: white; color: black; border-left: 10px solid var(--accent); }
+
+.admin-link { color: var(--alert-red); }
+
+.info-btn {
+    width: 100%;
+    padding: 30px;
+    background: var(--accent);
+    border: none;
+    font-family: 'Archivo Black', sans-serif;
+    cursor: pointer;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+/* --- WORKSPACE --- */
+.workspace {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.status-bar {
+    padding: 20px;
+    border-bottom: var(--border-width) solid var(--black);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--gray);
+    font-weight: 800;
+    font-size: 0.7rem;
+}
+
+.login-trigger {
+    background: var(--black);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-family: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+/* --- CONTENT PANELS --- */
+.content-grid {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    overflow-y: auto;
+}
+
+.panel {
+    border: var(--border-width) solid var(--black);
+    background: white;
+}
+
+.panel-label {
+    background: var(--black);
+    color: white;
+    padding: 5px 15px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.input-wrapper {
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.industrial-input {
+    flex-grow: 1;
+    border: 3px solid var(--black);
+    padding: 15px;
+    font-family: inherit;
+    font-weight: 800;
+    outline: none;
+}
+
+.action-btn {
+    background: var(--black);
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.action-btn:hover { background: var(--accent); color: black; }
+
+/* --- DATA TABLES --- */
+.table-container { padding: 20px; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+    text-align: left;
+    border-bottom: var(--border-width) solid var(--black);
+    padding: 10px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.data-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--gray);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.tag {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+}
+.alert { background: var(--alert-red); }
+.safe { background: var(--black); }
+
+</style>
+</head>
+<body>
+
+    <div class="main-layout">
+        <aside class="sidebar">
+            <div class="brand-box">
+                <img src="logo.png" alt="StockMaster Logo" class="brand-logo">
+            </div>
+            <nav class="nav-stack">
+                <a href="index.html" class="nav-link">STOCK</a>
+                <a href="suppliers.html" class="nav-link">SUPPLIERS</a>
+                <a href="orders.html" class="nav-link active">ORDERS</a>
+                <a href="admin.html" class="nav-link admin-link" style="color:var(--alert-red)">ADMIN</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="info-btn" onclick="alert('Printing Logistics Report...')">REPORTS</button>
+            </div>
+        </aside>
+
+        <main class="workspace">
+            <header class="status-bar">
+                <div class="path-indicator">PATH: ROOT > ORDERS_MANAGEMENT > FULFILLMENT_LOG</div>
+                <div class="auth-zone">
+                    <button class="login-trigger">LOGIN / REGISTER</button>
+                </div>
+            </header>
+
+            <section class="content-grid">
+                <div class="panel">
+                    <div class="panel-label">ACTION: INITIATE_NEW_PURCHASE_ORDER</div>
+                    <form class="input-wrapper" id="order-form">
+                        <input type="text" id="order-id" placeholder="ORDER_REF_ID" class="industrial-input" required>
+                        <select id="supplier-select" class="industrial-input" style="background: white;" required>
+                            <option value="">SELECT_SUPPLIER...</option>
+                            <option value="APEX INDUSTRIAL">APEX INDUSTRIAL</option>
+                            <option value="CORE LOGISTICS">CORE LOGISTICS</option>
+                            <option value="TITAN MFG">TITAN MFG</option>
+                        </select>
+                        <button type="submit" class="action-btn">CREATE_ORDER</button>
+                    </form>
+                </div>
+
+                <div class="panel table-panel">
+                    <div class="panel-label">ACTIVE_ORDER_STREAM</div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ORDER_NO</th>
+                                    <th>DATE_STAMP</th>
+                                    <th>DESTINATION</th>
+                                    <th>PROGRESS</th>
+                                    <th>STATUS_CODE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-body">
+                                <tr>
+                                    <td>#ORD-8821</td>
+                                    <td>2026-03-28</td>
+                                    <td>WAREHOUSE_A</td>
+                                    <td>[■■■■■□□□]</td>
+                                    <td><span class="tag safe">IN_TRANSIT</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-8822</td>
+                                    <td>2026-03-30</td>
+                                    <td>RETAIL_LOC_04</td>
+                                    <td>[■■■■■■■■]</td>
+                                    <td><span class="tag safe">DELIVERED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // HANDLE ORDER CREATION
+        document.getElementById('order-form').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const orderId = document.getElementById('order-id').value;
+            const supplier = document.getElementById('supplier-select').value;
+            const date = new Date().toISOString().split('T')[0]; // Current date YYYY-MM-DD
+
+            const tbody = document.getElementById('order-body');
+            
+            // Create a new row
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>#${orderId.toUpperCase()}</td>
+                <td>${date}</td>
+                <td>${supplier}</td>
+                <td>[■□□□□□□□]</td>
+                <td><span class="tag alert">PENDING_AUTH</span></td>
+            `;
+
+            // Insert at the top of the list
+            tbody.insertBefore(newRow, tbody.firstChild);
+
+            // Reset form
+            this.reset();
+        };
+    </script>
+
+</body>
+</html>
