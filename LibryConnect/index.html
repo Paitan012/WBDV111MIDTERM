@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibryConnect</title>
+<link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+<img src="logo.png" class="ilogo">
+
+<div class="logo">LibryConnect</div>
+
+<div class="nav-buttons">
+    <button onclick="window.location.href='index.html'">Search</button>
+    <button onclick="window.location.href='members.html'">Members</button>
+    <button onclick="window.location.href='loans.html'">Loans</button>
+</div>
+</nav>
+
+
+<!-- BANNER -->
+
+<header class="banner">
+<h1>LibryConnect</h1>
+<p>Search • Borrow • Track</p>
+</header>
+
+
+<!-- SEARCH -->
+
+<div class="search-section">
+
+<input id="searchInput" type="text" placeholder="Search book title...">
+
+<button onclick="searchBook()">Search</button>
+
+</div>
+
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+  <div>
+    <div class="card">
+      <h3>Reading Streak</h3>
+      <p>0 days</p>
+    </div>
+
+    <div class="card">
+      <h3>Books Lent</h3>
+      <p>None</p>
+    </div>
+
+    <div class="card">
+      <h3>Clock</h3>
+      <p id="clock"></p>
+    </div>
+  </div>
+
+  <div class="wide-card">
+    <img src="w.jpg" alt="Wide image">
+  </div>
+</div>
+
+<div id="results" class="book-grid"></div>
+
+</div>
+
+
+<script>
+const books = [
+  { title:"Little Women", img:"b1.jpg", status:"Available" },
+  { title:"Lost in a Book", img:"b2.jpg", status:"Available" },
+  { title:"Snow White", img:"b3.jpg", status:"Available" },
+  { title:"Brave", img:"b4.jpg", status:"Available" },
+  { title:"Tangled in Time", img:"b5.jpg", status:"Available" },
+  { title:"Royalty Witches", img:"b6.jpg", status:"Available" }
+];
+
+const results = document.getElementById("results");
+
+// ---------------- DISPLAY BOOKS ----------------
+function displayBooks(list){
+  results.innerHTML="";
+
+  const loanBooks = JSON.parse(localStorage.getItem("loanBooks") || "[]");
+  const loanedTitles = loanBooks.map(b => b.title);
+
+  list.forEach(book => {
+    const isLoaned = loanedTitles.includes(book.title);
+    const div = document.createElement("div");
+    div.className = "book-card";
+    div.innerHTML = `
+      <img src="${book.img}">
+      <h3>${book.title}</h3>
+      <p>Status: ${isLoaned ? 'On Loan' : 'Available'}</p>
+      ${isLoaned ? '<button disabled>Not Available</button>' : '<button onclick="loanBook(this)">Loan</button>'}
+      <p class="due">${isLoaned ? 'Due: ' + loanBooks.find(b => b.title === book.title).due : ''}</p>
+    `;
+    results.appendChild(div);
+  });
+}
+
+// ---------------- SEARCH FUNCTION ----------------
+function searchBook(){
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = books.filter(book => book.title.toLowerCase().includes(input));
+  if(filtered.length === 0){
+    results.innerHTML = `<p class="no-result">No results found</p>`;
+  } else {
+    displayBooks(filtered);
+  }
+}
+
+// ---------------- LOAN FUNCTION ----------------
+function loanBook(btn){
+  const card = btn.parentElement;
+  const title = card.querySelector("h3").innerText;
+  const img = card.querySelector("img").src;
+
+  // Set due date 7 days from now
+  const due = new Date();
+  due.setDate(due.getDate() + 7);
+  const dueStr = due.toDateString();
+
+  // Save to localStorage
+  let loanBooks = JSON.parse(localStorage.getItem("loanBooks") || "[]");
+  if(!loanBooks.some(b => b.title === title)){
+    loanBooks.push({ title, img, due: dueStr });
+    localStorage.setItem("loanBooks", JSON.stringify(loanBooks));
+  }
+
+  // Update Books Lent and refresh display
+  updateBooksLent();
+  displayBooks(books);
+}
+
+// ---------------- CLOCK ----------------
+function updateClock(){
+  const now = new Date();
+  document.getElementById("clock").innerText = now.toLocaleTimeString();
+}
+setInterval(updateClock,1000);
+
+// ---------------- UPDATE BOOKS LENT CARD ----------------
+function updateBooksLent(){
+  const cards = document.querySelectorAll(".sidebar .card");
+  let booksLentCard = null;
+  cards.forEach(c => {
+    if(c.querySelector("h3").innerText === "Books Lent") booksLentCard = c;
+  });
+  if(!booksLentCard) return;
+
+  const loanBooks = JSON.parse(localStorage.getItem("loanBooks") || "[]");
+  const count = loanBooks.length;
+  booksLentCard.querySelector("p").innerText = count === 0 ? "None" : count + " book" + (count > 1 ? "s" : "");
+}
+
+// ---------------- INITIALIZE ----------------
+updateBooksLent();
+displayBooks(books);
+</script>
+
+</body>
+</html>

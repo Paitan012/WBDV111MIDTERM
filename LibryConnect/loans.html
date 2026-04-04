@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loans - LibryConnect</title>
+<style>
+/* ---------------- BODY ---------------- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Georgia', serif;
+  background: #0e0b0b;
+  color: #f5f0e6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background: #1a1a1a;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #e6c79c;
+  font-family: 'Georgia', serif; /* classic serif for vintage feel */
+    margin-left: -700px;
+}
+
+.ilogo{
+  width: 50px;
+  height: 50px;
+  margin-left: -30px;
+}
+
+.nav-buttons button {
+  background: #7b4b2a;              /* warm brown like old card */
+  color: #f5f0e6;                   /* cream text */
+  border: 2px solid #d1bfa7;        /* light outline like card edge */
+  border-radius: 4px;                /* subtle rounded corners */
+  padding: 8px 18px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;     /* vintage-modern font */
+  font-weight: bold;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* subtle depth effect */
+  transition: 0.2s;
+}
+
+.nav-buttons button:hover {
+  background: #9b6a46;               /* slightly brighter brown */
+  transform: translateY(-2px);       /* lift effect for modern touch */
+}
+
+/* ---------------- MAIN CONTENT ---------------- */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding:  20px 20px 10px 20px; /* top padding for navbar */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* ---------------- LOAN CARDS ---------------- */
+.loan-card {
+  display: flex;
+  gap: 20px;
+  background: #2b1a0f;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  align-items: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.loan-card:hover {
+  background: #3b2418;
+  transform: translateY(-3px);
+}
+
+.loan-card img {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #f5f0e6;
+}
+
+.loan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loan-info h3 {
+  margin: 0;
+  color: #f5e0c3;
+}
+
+.loan-info p {
+  margin: 0;
+  color: #d1bfa7;
+  font-size: 0.9rem;
+}
+
+.return-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #5c3a21;
+  color: #f5f0e6;
+  font-weight: bold;
+  cursor: pointer;
+  width: fit-content;
+  transition: 0.2s;
+}
+
+.return-button:hover {
+  background: #7b4c2b;
+}
+
+/* ---------------- NO LOANS MESSAGE ---------------- */
+#no-loans {
+  text-align: center;
+  color: #d1bfa7;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<!-- ---------------- NAVBAR ---------------- -->
+
+<nav class="navbar">
+  <img src="logo.png" class="ilogo">
+  <div class="logo">LibryConnect</div>
+  <div class="nav-buttons">
+    <button onclick="window.location.href='index.html'">Search</button>
+    <button onclick="window.location.href='members.html'">Members</button>
+    <button onclick="window.location.href='loans.html'">Loans</button>
+  </div>
+</nav>
+
+<!-- ---------------- MAIN CONTENT ---------------- -->
+<div class="container" id="loanContainer">
+  <h2>Your Current Loans</h2>
+  <p id="no-loans">You have no borrowed books yet.</p>
+</div>
+
+<script>
+const loanContainer = document.getElementById('loanContainer');
+const noLoansMsg = document.getElementById('no-loans');
+
+const storedBooks = JSON.parse(localStorage.getItem('loanBooks') || '[]');
+
+if (storedBooks.length > 0) {
+  noLoansMsg.style.display = 'none';
+  storedBooks.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'loan-card';
+    card.innerHTML = `
+      <img src="${book.img}" alt="${book.title}">
+      <div class="loan-info">
+        <h3>${book.title}</h3>
+        <p>Due: ${book.due}</p>  <!-- Only due date -->
+        <button class="return-button" onclick="returnBook('${book.title}')">Return</button>
+      </div>
+    `;
+    loanContainer.appendChild(card);
+  });
+}
+
+// ---------------- RETURN BOOK FUNCTION ----------------
+function returnBook(title) {
+  let books = JSON.parse(localStorage.getItem('loanBooks') || '[]');
+  books = books.filter(b => b.title !== title);
+  localStorage.setItem('loanBooks', JSON.stringify(books));
+  location.reload(); // reload to update page
+}
+</script>
+
+</body>
+</html>
