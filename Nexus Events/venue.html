@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Events | Venue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4da6;    /* Hot Pink */
+      --secondary: #00cfff;  /* Cyan */
+      --accent: #ffd700;     /* Yellow */
+      --bg: #fdf6f0;         /* Soft Cream Background */
+      --card-bg: #ffffff;
+      --text: #000000;
+      --dark-border: #000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    body {
+  /* 0.7 = 70% opacity for the tint, letting 30% of the raw image shine through */
+  background: linear-gradient(rgba(253, 246, 240, 0.7), rgba(253, 246, 240, 0.5)), 
+              url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ===== NAVBAR ===== */
+    header { 
+      background-color: var(--accent); 
+      border-bottom: 4px solid var(--dark-border); 
+      padding: 0.5rem 0; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-family: 'Baloo 2'; font-size: 2.5rem; font-weight: 800; color: var(--secondary); text-shadow: 2px 2px 0 #000; text-decoration: none; }
+    
+    nav a { margin-left: 0.8rem; padding: 0.5rem 1rem; background: #fff; color: var(--primary); font-weight: 800; border: 2px solid var(--dark-border); border-radius: 8px; text-decoration: none; transition: 0.1s; }
+    nav a:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #000; }
+    nav a.active { background: var(--primary); color: #fff; }
+
+    /* ===== SECTIONS ===== */
+    .section-title { font-family: 'Baloo 2'; font-size: 3rem; margin: 2rem 0; text-align: center; color: var(--primary); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+
+    .panel {
+      background: var(--card-bg);
+      padding: 2rem;
+      border: 4px solid var(--dark-border);
+      border-radius: 25px;
+      box-shadow: 8px 8px 0 var(--secondary);
+    }
+
+    /* ===== TAGS ===== */
+    .tag-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 1rem 0; }
+    .tag { padding: 0.4rem 1rem; background: var(--accent); border: 2px solid #000; font-weight: 900; border-radius: 50px; color: #000; font-size: 0.8rem; }
+
+    /* ===== VENUE MAP IMAGE ===== */
+    .venue-map-container { text-align: center; margin-bottom: 3rem; }
+    .venue-map-container img {
+      width: 100%;
+      max-width: 1000px;
+      border: 4px solid var(--dark-border);
+      border-radius: 20px;
+      box-shadow: 10px 10px 0 var(--primary);
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--card-bg);
+      padding: 1.8rem;
+      border: 3px solid var(--dark-border);
+      border-radius: 20px;
+      box-shadow: 6px 6px 0 var(--accent);
+      transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .card:hover { transform: scale(1.02); box-shadow: 10px 10px 0 var(--primary); }
+    .card h3 { margin-bottom: 1rem; color: var(--secondary); font-size: 1.5rem; font-weight: 900; }
+
+    /* ===== BUTTONS ===== */
+    .btn--alt { display: inline-block; padding: 1rem 2rem; background: var(--primary); color: #fff; font-weight: 900; border: 3px solid #000; border-radius: 12px; text-decoration: none; box-shadow: 4px 4px 0 #000; margin-top: 1rem; text-transform: uppercase; }
+    .btn--alt:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--secondary); }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 3rem; background: #000; color: #fff; text-align: center; font-weight: 800; border-top: 4px solid var(--primary); margin-top: 2rem; }
+  .nav-logo-img {
+    height: 60px; /* Adjust height based on your preference */
+    width: auto;
+    object-fit: contain;
+    border-radius: 50%; /* This creates the circular effect */
+    border: 3px solid var(--dark-border); /* Adds a heavy black border to match the aesthetic */
+    box-shadow: 2px 2px 0 var(--secondary); /* Small offset shadow to make it pop */
+    margin-right: 15px; /* Adds spacing between the logo and the brand name */
+}
+
+/* Updated brand styling to handle alignment */
+.brand {
+    display: flex;
+    align-items: center; /* Centers image and text vertically */
+}
+  </style>
+</head>
+<body>
+
+<header>
+    <div class="container navbar">
+        <a href="index.html" class="brand">
+            <img src="logo.png" alt="Nexus Events Logo" class="nav-logo-img">
+            <span>Nexus Events</span>
+        </a>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="index.html#eventss">Events</a>
+            <a href="tickets.html">Tickets</a>
+            <a href="venue.html">Venue</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+
+  <h1 class="section-title">The Venue</h1>
+
+  <!-- VENUE INFO -->
+  <section class="grid">
+    <div class="panel">
+      <h2>Nexus Hall Complex</h2>
+      <p style="margin-top:1rem; font-size:1rem;">
+        Three stages, two rooftops, and a night market runway built for vibrant pop shows. Every zone is connected for easy flow and fast access to food, art, and merch.
+      </p>
+      <div class="tag-row">
+        <span class="tag">Main Hall</span>
+        <span class="tag">Rooftop Stage</span>
+        <span class="tag">Market Lane</span>
+        <span class="tag">Creator Lounge</span>
+      </div>
+      <a class="btn--alt" href="tickets.html">Pick Your Seats ₱</a>
+    </div>
+
+    <!-- VENUE MAP IMAGE -->
+    <div class="venue-map-container">
+      <img src="venue.webp" alt="Venue Layout Map">
+    </div>
+  </section>
+
+  <!-- AMENITIES -->
+  <h2 class="section-title">Amenities</h2>
+  <section class="grid">
+    <div class="card">
+      <h3>Sound Lab Lounge</h3>
+      <p>Recharge with ambient sets and low-light seating between performances.</p>
+    </div>
+    <div class="card" style="box-shadow: 6px 6px 0 var(--secondary);">
+      <h3>Food Capsule</h3>
+      <p>Street chefs, fresh mocktails, and vegan-friendly pop bites.</p>
+    </div>
+    <div class="card" style="box-shadow: 6px 6px 0 var(--primary);">
+      <h3>Merch Lab</h3>
+      <p>Customize posters, stickers, and apparel on the spot.</p>
+    </div>
+  </section>
+
+  <!-- EVENT SCHEDULE -->
+  <section class="panel" style="margin-bottom:3rem; box-shadow: 10px 10px 0 var(--primary);">
+    <h2 class="section-title" style="margin-top:0; color: var(--secondary);">Tonight's Flow</h2>
+    <div class="grid">
+      <div class="card">
+        <h3 style="color:var(--primary)">6:00 PM</h3>
+        <p>Doors + Market Lane Open</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--primary)">7:30 PM</h3>
+        <p>Rooftop Stage Warm-up Sets</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--primary)">9:00 PM</h3>
+        <p>Main Hall Headliners</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Nexus Events · Venue Guide · © <span id="year"></span>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

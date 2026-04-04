@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Events | Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4da6;    /* Hot Pink */
+      --secondary: #00cfff;  /* Cyan */
+      --accent: #ffd700;     /* Yellow */
+      --bg: #fdf6f0;         /* Soft Cream Background */
+      --card-bg: #ffffff;
+      --text: #000000;
+      --dark-border: #000;
+    }
+
+    /* Global Reset with 'Outfit' font */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    
+    body {
+  /* 0.7 = 70% opacity for the tint, letting 30% of the raw image shine through */
+  background: linear-gradient(rgba(253, 246, 240, 0.7), rgba(253, 246, 240, 0.5)), 
+              url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    main { flex: 1; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ===== NAVBAR (EXACT COPY FROM VENUE) ===== */
+    header { 
+      background-color: var(--accent); 
+      border-bottom: 4px solid var(--dark-border); 
+      padding: 0.5rem 0; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-family: 'Baloo 2'; font-size: 2.5rem; font-weight: 800; color: var(--secondary); text-shadow: 2px 2px 0 #000; text-decoration: none; }
+    
+    nav a { 
+      margin-left: 0.8rem; 
+      padding: 0.5rem 1rem; 
+      background: #fff; 
+      color: var(--primary); 
+      font-weight: 800; 
+      border: 2px solid var(--dark-border); 
+      border-radius: 8px; 
+      text-decoration: none; 
+      transition: 0.1s; 
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+    nav a:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #000; }
+    nav a.active { background: var(--primary); color: #fff; }
+
+    /* ===== TICKER ===== */
+    .ticker { background: var(--secondary); border-bottom: 4px solid var(--dark-border); padding: 0.8rem 0; overflow: hidden; }
+    .ticker span { display: inline-block; white-space: nowrap; font-weight: 900; animation: scroll 25s linear infinite; text-transform: uppercase; }
+    @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+    /* ===== HERO SECTION ===== */
+    .hero { display: flex; flex-wrap: wrap; gap: 3rem; padding: 4rem 0; align-items: center; }
+    .hero-text { flex: 1 1 500px; }
+    .hero-text h1 { font-family: 'Baloo 2'; font-size: 4rem; color: var(--primary); line-height: 1; margin-bottom: 1.5rem; font-weight: 800; }
+    .hero-text p { font-size: 1.3rem; margin-bottom: 2rem; font-weight: 600; }
+
+    /* ===== CARDS & GRIDS (MATCHING VENUE STYLE) ===== */
+    .section-title { font-family: 'Baloo 2'; font-size: 3.5rem; text-align: center; margin: 3rem 0; color: var(--primary); font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+    
+    .card {
+      background: var(--card-bg);
+      padding: 2rem;
+      border: 4px solid var(--dark-border);
+      border-radius: 25px;
+      box-shadow: 8px 8px 0 var(--primary);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--secondary); }
+
+    .badge, .tag { 
+      display: inline-block; padding: 0.4rem 1rem; background: var(--accent); 
+      border: 2px solid var(--dark-border); font-weight: 900; font-size: 0.8rem; 
+      text-transform: uppercase; border-radius: 50px; width: fit-content;
+    }
+
+    /* ===== FORMS ===== */
+    .auth-grid { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+    .form-grid { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1rem; }
+    input { padding: 0.8rem; border: 3px solid var(--dark-border); border-radius: 12px; font-weight: 600; outline: none; }
+    input:focus { border-color: var(--secondary); }
+    label { font-weight: 800; text-transform: uppercase; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; }
+
+    /* ===== BUTTONS ===== */
+    .button-row { display: flex; gap: 1rem; }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      font-weight: 900;
+      background: var(--secondary);
+      border: 3px solid var(--dark-border);
+      box-shadow: 4px 4px 0 #000;
+      border-radius: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.1s;
+    }
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--primary); }
+    .btn--alt { background: var(--accent); }
+    .btn--big { font-size: 1.2rem; padding: 1.2rem 2.5rem; }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 3rem; text-align: center; background: #000; color: #fff; font-weight: 800; border-top: 4px solid var(--primary); margin-top: auto; }
+  
+  /* Logo styling: large and circular */
+.nav-logo-img {
+    height: 60px; /* Adjust height based on your preference */
+    width: auto;
+    object-fit: contain;
+    border-radius: 50%; /* This creates the circular effect */
+    border: 3px solid var(--dark-border); /* Adds a heavy black border to match the aesthetic */
+    box-shadow: 2px 2px 0 var(--secondary); /* Small offset shadow to make it pop */
+    margin-right: 15px; /* Adds spacing between the logo and the brand name */
+}
+
+/* Updated brand styling to handle alignment */
+.brand {
+    display: flex;
+    align-items: center; /* Centers image and text vertically */
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container navbar">
+        <a href="index.html" class="brand">
+            <img src="logo.png" alt="Nexus Events Logo" class="nav-logo-img">
+            <span>Nexus Events</span>
+        </a>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="#events">Events</a>
+            <a href="tickets.html">Tickets</a>
+            <a href="venue.html">Venue</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+    </div>
+</header>
+
+  <div class="ticker">
+    <span>NEXUS EVENTS: LIVE energy AND bold ART collide · TICKETS AVAILABLE NOW · VIP ACCESS OPEN · NEW LINEUP RELEASED ·</span>
+  </div>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Where live energy and bold art collide.</h1>
+        <p>Nexus Events is your vibrant headquarters for pop-forward concerts, creator meetups, and night markets.</p>
+        <div class="button-row">
+          <a class="btn btn--big" href="#events">Explore Events</a>
+          <a class="btn btn--big btn--alt" href="tickets.html">Get Tickets ₱</a>
+        </div>
+      </div>
+      <div class="card hero-card" style="flex: 1 1 350px;">
+        <span class="badge">Next Up</span>
+        <h2 style="font-family:'Baloo 2'; font-size: 2.2rem; color: var(--secondary);">Pixel Parade</h2>
+        <p><strong>April 12 · 7:00 PM</strong><br>Nexus Hall Complex</p>
+        <div style="display:flex; gap:10px;">
+          <span class="tag">Live Set</span> <span class="tag">Visuals</span>
+        </div>
+        <a class="btn" href="tickets.html">Reserve Seats</a>
+      </div>
+    </section>
+
+    <section id="events">
+      <h2 class="section-title">Upcoming Events</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="badge">Hot</span>
+          <h3>Neon Circuit Live</h3>
+          <p>Electro-pop night with synchronized LED choreography.</p>
+          <div style="display:flex; gap:10px;"><span class="tag">Live</span> <span class="tag">Dance</span></div>
+          <a class="btn" href="tickets.html">Get Tickets</a>
+        </article>
+        
+        <article class="card" style="box-shadow: 8px 8px 0 var(--secondary);">
+          <span class="badge">New</span>
+          <h3>Studio Rooftop</h3>
+          <p>Creator meetups, sunset projections, and live illustrations.</p>
+          <div style="display:flex; gap:10px;"><span class="tag">Art</span> <span class="tag">Meetup</span></div>
+          <a class="btn" href="tickets.html">Get Tickets</a>
+        </article>
+
+        <article class="card" style="box-shadow: 8px 8px 0 var(--accent);">
+          <span class="badge">Limited</span>
+          <h3>Metro Market</h3>
+          <p>Night market with street bites, pop-up makers, and DJs.</p>
+          <div style="display:flex; gap:10px;"><span class="tag">Food</span> <span class="tag">Market</span></div>
+          <a class="btn" href="tickets.html">Get Tickets</a>
+        </article>
+      </div>
+    </section>
+
+    <section style="margin-top: 4rem; margin-bottom: 4rem;">
+      <h2 class="section-title">Account Access</h2>
+      <div class="grid auth-grid">
+        <div class="card">
+          <h3 style="font-family:'Baloo 2'; font-size: 2rem; color: var(--primary);">Log In</h3>
+          <p>Jump back into your saved events and history.</p>
+          <form class="form-grid">
+            <label>Email <input type="email" placeholder="you@email.com" required></label>
+            <label>Password <input type="password" placeholder="••••••••" required></label>
+            <button class="btn" type="submit">Log In</button>
+          </form>
+        </div>
+        
+        <div class="card" style="box-shadow: 8px 8px 0 var(--accent);">
+          <h3 style="font-family:'Baloo 2'; font-size: 2rem; color: var(--secondary);">Register</h3>
+          <p>Create your Nexus ID to unlock member perks.</p>
+          <form class="form-grid">
+            <label>Full Name <input type="text" placeholder="Full name" required></label>
+            <label>Email <input type="email" placeholder="you@email.com" required></label>
+            <label>Password <input type="password" placeholder="Create password" required></label>
+            <button class="btn btn--alt" type="submit">Create Account</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Nexus Events · © <span id="year"></span> BosskramAteru
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Events | Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Outfit:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4da6;    /* Hot Pink */
+      --secondary: #00cfff;  /* Cyan */
+      --accent: #ffd700;     /* Yellow */
+      --bg: #fdf6f0;         /* Soft Cream */
+      --card-bg: #ffffff;
+      --text: #000000;
+      --dark-border: #000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    
+    body {
+  /* 0.7 = 70% opacity for the tint, letting 30% of the raw image shine through */
+  background: linear-gradient(rgba(253, 246, 240, 0.7), rgba(253, 246, 240, 0.5)), 
+              url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ===== NAVBAR (EXACT MATCH) ===== */
+    header { 
+      background-color: var(--accent); 
+      border-bottom: 4px solid var(--dark-border); 
+      padding: 0.5rem 0; 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; }
+    .brand { 
+      font-family: 'Baloo 2'; 
+      font-size: 2.5rem; 
+      font-weight: 800; 
+      color: var(--secondary); 
+      text-shadow: 2px 2px 0 #000; 
+      text-decoration: none; 
+    }
+    
+    nav a, nav button { 
+      margin-left: 0.8rem; 
+      padding: 0.5rem 1rem; 
+      background: #fff; 
+      color: var(--primary); 
+      font-weight: 800; 
+      border: 2px solid var(--dark-border); 
+      border-radius: 8px; 
+      text-decoration: none; 
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    nav a:hover, nav button:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #000; background: var(--primary); color: #fff; }
+
+    /* ===== HERO SECTION ===== */
+    .admin-hero { display: flex; flex-wrap: wrap; gap: 2rem; padding: 3rem 0; align-items: flex-start; }
+    .hero-text { flex: 1 1 500px; }
+    .hero-text h1 { font-family: 'Baloo 2'; font-size: 3.5rem; color: var(--primary); margin-bottom: 1rem; }
+    
+    /* Action Buttons */
+    .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; }
+    .btn {
+      padding: 1rem 1.5rem;
+      font-weight: 900;
+      border: 3px solid #000;
+      border-radius: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+    }
+    .btn-main { background: var(--secondary); color: #000; }
+    .btn-alt { background: var(--accent); color: #000; }
+    .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--primary); }
+
+    /* Live Card */
+    .live-card {
+      flex: 1 1 350px;
+      background: #000;
+      color: #fff;
+      padding: 2rem;
+      border-radius: 25px;
+      border: 4px solid var(--primary);
+      position: relative;
+      box-shadow: 10px 10px 0 var(--secondary);
+    }
+    .badge-live {
+      position: absolute;
+      top: -15px;
+      right: 20px;
+      background: var(--primary);
+      padding: 0.3rem 1rem;
+      font-weight: 900;
+      border: 2px solid #fff;
+      border-radius: 50px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+    /* ===== STATS GRID ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .stat-box {
+      background: #fff;
+      padding: 1.5rem;
+      border: 3px solid #000;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 6px 6px 0 var(--accent);
+    }
+    .stat-box strong { display: block; font-size: 2.5rem; font-family: 'Baloo 2'; color: var(--secondary); line-height: 1; }
+    .stat-box span { font-weight: 800; text-transform: uppercase; font-size: 0.8rem; color: #666; }
+
+    /* ===== DATA PANELS ===== */
+    .panel {
+      background: #fff;
+      padding: 2rem;
+      border: 4px solid #000;
+      border-radius: 25px;
+      box-shadow: 10px 10px 0 var(--primary);
+      margin-bottom: 4rem;
+    }
+    .panel h2 { font-family: 'Baloo 2'; font-size: 2rem; margin-bottom: 1.5rem; }
+
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th { text-align: left; padding: 1rem; border-bottom: 3px solid #000; text-transform: uppercase; font-weight: 900; }
+    .admin-table td { padding: 1rem; border-bottom: 1px solid #ddd; font-weight: 600; }
+    
+    .status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-weight: 900;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      border: 2px solid #000;
+    }
+    .status-green { background: #2ecc71; color: #fff; }
+    .status-yellow { background: var(--accent); color: #000; }
+
+    /* ===== FOOTER ===== */
+    footer { 
+      padding: 3rem; 
+      background: #000; 
+      color: #fff; 
+      text-align: center; 
+      font-weight: 800; 
+      border-top: 4px solid var(--primary); 
+      margin-top: auto;
+    }
+
+    .tag-row { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+    .tag { background: rgba(255,255,255,0.1); padding: 0.3rem 0.7rem; border-radius: 5px; font-size: 0.8rem; font-weight: 600; }
+  
+  .nav-logo-img {
+    height: 60px; /* Adjust height based on your preference */
+    width: auto;
+    object-fit: contain;
+    border-radius: 50%; /* This creates the circular effect */
+    border: 3px solid var(--dark-border); /* Adds a heavy black border to match the aesthetic */
+    box-shadow: 2px 2px 0 var(--secondary); /* Small offset shadow to make it pop */
+    margin-right: 15px; /* Adds spacing between the logo and the brand name */
+}
+
+/* Updated brand styling to handle alignment */
+.brand {
+    display: flex;
+    align-items: center; /* Centers image and text vertically */
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container navbar">
+      <a href="index.html" class="brand">
+            <img src="logo.png" alt="Nexus Events Logo" class="nav-logo-img">
+            <span>Nexus Events</span>
+        </a>
+      <nav>
+        <a href="index.html">Back to Site</a>
+        <button id="logoutBtn">Log Out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="admin-hero">
+      <div class="hero-text">
+        <h1>Admin Desk</h1>
+        <p>Quick control of events, tickets, venue operations, and guest messages.</p>
+        <div class="btn-group">
+          <button class="btn btn-main">+ New Event</button>
+          <button class="btn btn-alt">Update Tiers</button>
+        </div>
+      </div>
+
+      <div class="live-card">
+        <div class="badge-live">LIVE</div>
+        <h2 style="font-family:'Baloo 2'; color: var(--secondary);">Tonight's Headliner</h2>
+        <p style="font-weight: 600; margin-top: 0.5rem;">Neon Circuit Live · 9:00 PM · Main Hall</p>
+        <div class="tag-row">
+          <span class="tag">Crew Ready</span>
+          <span class="tag">Stage Check</span>
+          <span class="tag">VIP List</span>
+        </div>
+        <button class="btn btn-alt" style="width:100%; margin-top:1.5rem; font-size:0.8rem;" onclick="window.location.href='../index.html#events'">View Public Page</button>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-box">
+        <strong>1,248</strong>
+        <span>Tickets Sold Today</span>
+      </div>
+      <div class="stat-box" style="box-shadow: 6px 6px 0 var(--secondary);">
+        <strong>92%</strong>
+        <span>Venue Capacity</span>
+      </div>
+      <div class="stat-box" style="box-shadow: 6px 6px 0 var(--primary);">
+        <strong>18</strong>
+        <span>Staff Active</span>
+      </div>
+      <div class="stat-box">
+        <strong>6</strong>
+        <span>Support Tickets</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Upcoming Events Pipeline</h2>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pixel Parade</td>
+            <td>Apr 12</td>
+            <td><span class="status status-green">On Track</span></td>
+            <td><a href="#" style="color:var(--secondary); font-weight:900;">EDIT</a></td>
+          </tr>
+          <tr>
+            <td>Metro Market Nights</td>
+            <td>Apr 18</td>
+            <td><span class="status status-yellow">Staffing</span></td>
+            <td><a href="#" style="color:var(--secondary); font-weight:900;">EDIT</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    Nexus Events · Admin Dashboard · © <span id="year"></span>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if(confirm('Are you sure you want to log out of the command center?')) {
+        window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>
