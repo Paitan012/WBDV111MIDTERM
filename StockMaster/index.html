@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockMaster | Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --black: #000000;
+            --gray: #e0e0e0;
+            --border-width: 4px;
+            --accent: #00ff41; 
+            --alert: #ff4545;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg); font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
+        
+        .main-layout { display: flex; height: 100%; border: var(--border-width) solid var(--black); }
+
+        /* Sidebar */
+        .sidebar { width: 320px; background: var(--black); color: white; display: flex; flex-direction: column; border-right: var(--border-width) solid var(--black); }
+        .brand-box { padding: 40px 20px; border-bottom: 2px solid #333; }
+        .barcode { font-size: 1.5rem; letter-spacing: -2px; margin-bottom: 10px; }
+        h1 { font-family: 'Archivo Black', sans-serif; font-size: 2.2rem; line-height: 0.9; }
+        .nav-stack { flex-grow: 1; }
+        .nav-link { display: block; padding: 25px; color: white; text-decoration: none; font-weight: 800; font-size: 1.2rem; border-bottom: 1px solid #333; }
+        .nav-link:hover, .nav-link.active { background: white; color: black; }
+        .info-btn { width: 100%; padding: 30px; background: var(--accent); border: none; font-family: 'Archivo Black', sans-serif; cursor: pointer; font-size: 1.1rem; }
+
+        /* Workspace */
+        .workspace { flex-grow: 1; display: flex; flex-direction: column; }
+        .status-bar { padding: 20px; border-bottom: var(--border-width) solid var(--black); display: flex; justify-content: space-between; align-items: center; background: var(--gray); font-weight: 800; font-size: 0.8rem; }
+        .content-grid { padding: 30px; display: flex; flex-direction: column; gap: 30px; overflow-y: auto; }
+
+        /* Panels */
+        .panel { border: var(--border-width) solid var(--black); background: white; }
+        .panel-label { background: var(--black); color: white; padding: 5px 15px; font-size: 0.75rem; font-weight: 800; }
+        .input-wrapper { padding: 20px; display: flex; gap: 10px; }
+        .industrial-input { flex-grow: 1; border: 2px solid var(--black); padding: 15px; font-family: inherit; font-weight: 800; outline: none; }
+
+        /* Buttons */
+        .action-btn { background: var(--black); color: white; padding: 0 30px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .action-btn:hover { background: var(--accent); color: black; }
+        .mini-btn { border: 2px solid var(--black); background: none; font-family: inherit; font-weight: 800; padding: 5px 10px; cursor: pointer; font-size: 0.7rem; }
+        .mini-btn:hover { background: var(--black); color: white; }
+
+        /* Table */
+        .table-container { padding: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; border-bottom: var(--border-width) solid var(--black); padding: 10px; font-size: 0.9rem; }
+        .data-table td { padding: 15px 10px; border-bottom: 1px solid var(--gray); font-weight: 800; }
+
+        .tag { padding: 4px 8px; font-size: 0.7rem; font-weight: 800; color: white; display: inline-block; }
+        .tag.alert { background: var(--alert); }
+        .tag.safe { background: var(--black); }
+
+        /* Auth Modal */
+        .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .auth-panel { background: white; border: var(--border-width) solid var(--black); width: 400px; box-shadow: 15px 15px 0px var(--accent); }
+        .auth-tabs { display: flex; border-bottom: var(--border-width) solid var(--black); }
+        .tab-btn { flex: 1; padding: 15px; font-weight: 800; border: none; background: var(--gray); cursor: pointer; }
+        .tab-btn.active { background: white; }
+        .auth-form { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .auth-form label { font-size: 0.7rem; font-weight: 800; }
+
+/* BIG INDUSTRIAL LOGO - RECTANGULAR */
+.brand-box { 
+    padding: 20px 10px; /* More breathing room for the big logo */
+    border-bottom: 1px solid #333; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+}
+
+.brand-logo {
+    width: 190px;        /* Large impact size */
+    height: auto;        /* Maintains original aspect ratio */
+    border: var(--border-width) solid white; /* Thick industrial frame */
+    background: white;   /* Solid backdrop for the logo */
+    margin-bottom: 25px;
+    padding: 10px;       /* Inset padding makes it look like a badge */
+    object-fit: contain;
+}
+    </style>
+</head>
+<body>
+
+    <div class="main-layout">
+<aside class="sidebar">
+    <div class="brand-box">
+        <img src="logo.png" alt="StockMaster Logo" class="brand-logo">
+    </div>
+           <nav class="nav-stack">
+                <a href="index.html" class="nav-link">STOCK</a>
+                <a href="suppliers.html" class="nav-link active">SUPPLIERS</a>
+                <a href="orders.html" class="nav-link">ORDERS</a>
+                <a href="admin.html" class="nav-link admin-link" style="color:var(--alert)">ADMIN</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="info-btn" onclick="alert('Generating CSV...')">REPORTS</button>
+            </div>
+        </aside>
+
+        <main class="workspace">
+            <header class="status-bar">
+                <div class="path-indicator">PATH: <span id="current-op">AWAITING_AUTH</span></div>
+                <div class="auth-zone">
+                    <button class="login-trigger mini-btn" onclick="toggleAuth()">LOGIN / REG</button>
+                </div>
+            </header>
+
+            <section class="content-grid">
+                <div class="panel">
+                    <div class="panel-label">ACTION: SCAN_ITEM</div>
+                    <form class="input-wrapper" id="scan-form">
+                        <input type="text" id="sku-input" placeholder="INPUT SKU (e.g. #99-B21)" class="industrial-input" required>
+                        <button type="submit" class="action-btn">SCAN</button>
+                    </form>
+                </div>
+
+                <div class="panel table-panel">
+                    <div class="panel-label">INVENTORY_DATA_STREAM</div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ITEM_ID</th>
+                                    <th>STOCK_QTY</th>
+                                    <th>LIMIT_SET</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-panel">
+            <div class="panel-label">SECURE_ACCESS_TERMINAL</div>
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="l-tab" onclick="switchTab('login')">LOGIN</button>
+                <button class="tab-btn" id="r-tab" onclick="switchTab('register')">REGISTER</button>
+            </div>
+            <form id="authForm" class="auth-form" onsubmit="handleAuth(event)">
+                <label id="auth-label">OPERATOR_ID</label>
+                <input type="text" id="username" class="industrial-input" placeholder="ID_001" required>
+                <label>ACCESS_CODE</label>
+                <input type="password" class="industrial-input" placeholder="********" required>
+                <button type="submit" class="action-btn" style="padding:15px">AUTHORIZE</button>
+                <button type="button" class="mini-btn" onclick="toggleAuth()">CANCEL_ESC</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        let inventory = [
+            { id: "#99-B21", qty: 120, limit: 200 },
+            { id: "#44-K09", qty: 850, limit: 500 }
+        ];
+
+        // --- RENDER TABLE ---
+        function renderTable() {
+            const body = document.getElementById('inventory-body');
+            body.innerHTML = '';
+            inventory.forEach((item, index) => {
+                const isLow = item.qty < item.limit;
+                body.innerHTML += `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.qty}</td>
+                        <td>${item.limit}</td>
+                        <td><span class="tag ${isLow ? 'alert' : 'safe'}">${isLow ? 'LOW_STOCK' : 'OPTIMAL'}</span></td>
+                        <td><button class="mini-btn" onclick="updateLimit(${index})">SET LIMIT</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- FUNCTIONALITY ---
+        document.getElementById('scan-form').onsubmit = (e) => {
+            e.preventDefault();
+            const sku = document.getElementById('sku-input').value;
+            inventory.unshift({ id: sku.toUpperCase(), qty: Math.floor(Math.random() * 1000), limit: 100 });
+            document.getElementById('sku-input').value = '';
+            renderTable();
+        };
+
+        function updateLimit(index) {
+            const newLimit = prompt("ENTER NEW STOCK LIMIT:");
+            if (newLimit && !isNaN(newLimit)) {
+                inventory[index].limit = parseInt(newLimit);
+                renderTable();
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        let authMode = 'login';
+        function toggleAuth() {
+            const modal = document.getElementById('authOverlay');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function switchTab(mode) {
+            authMode = mode;
+            document.getElementById('l-tab').classList.toggle('active', mode === 'login');
+            document.getElementById('r-tab').classList.toggle('active', mode === 'register');
+            document.getElementById('auth-label').innerText = mode === 'login' ? 'OPERATOR_ID' : 'NEW_OPERATOR_NAME';
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            document.getElementById('current-op').innerText = `OPERATOR_${user.toUpperCase()}`;
+            document.querySelector('.login-trigger').innerText = "LOGOUT";
+            toggleAuth();
+        }
+
+        // Init
+        renderTable();
+    </script>
+</body>
+</html>
